@@ -1,415 +1,348 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🍣 Sushi Clicker</title>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>🍣 Sushi Clicker 2.0</title>
 <style>
-  :root{
-    --bg:#14101a; --panel:#1e1626; --panel2:#251b30; --line:#3a2b4d;
-    --gold:#ffcf5c; --red:#ff5a6e; --green:#7dff9e; --text:#f5ecdd; --dim:#b9a8cc;
-  }
-  *{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
-  body{background:radial-gradient(1200px 600px at 20% -10%,#2c1f3d 0%,var(--bg) 60%) fixed,var(--bg); color:var(--text); font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif; min-height:100vh;}
-  .topbar{display:flex; justify-content:space-between; align-items:center; padding:12px 18px; background:linear-gradient(180deg,#241a30,#1a1322); border-bottom:2px solid var(--line); position:sticky; top:0; z-index:20;}
-  .logo{font-size:24px; font-weight:800; letter-spacing:.5px;}
-  .logo small{font-size:12px; color:var(--dim); font-weight:400; margin-left:8px;}
-  .top-actions button{background:#2e2240; color:var(--text); border:1px solid var(--line); border-radius:10px; padding:8px 12px; cursor:pointer; font-size:14px; margin-left:8px;}
-  .top-actions button:hover{background:#3a2c52;}
-  .ticker{background:#0f0b14; border-bottom:1px solid var(--line); padding:8px 16px; font-style:italic; color:var(--dim); font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  #buffBar{display:flex; gap:8px; padding:8px 16px; flex-wrap:wrap;}
-  .buff{background:linear-gradient(180deg,#5b3a00,#3a2700); border:1px solid var(--gold); color:var(--gold); border-radius:8px; padding:4px 10px; font-size:13px; font-weight:700;}
-  .game{display:grid; grid-template-columns:400px 1fr; gap:16px; padding:16px; max-width:1200px; margin:0 auto;}
-  @media(max-width:850px){.game{grid-template-columns:1fr;}}
-  .panel{background:linear-gradient(180deg,var(--panel),#191223); border:1px solid var(--line); border-radius:16px; padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.4);}
-  .counter{text-align:center; margin-bottom:10px;}
-  #sushiCount{font-size:34px; font-weight:900; color:var(--gold); text-shadow:0 2px 0 #5c4300;}
-  #perSecond,#perClick{color:var(--dim); font-size:14px; margin-top:2px;}
-  #bigSushiWrap{position:relative; display:flex; justify-content:center; padding:18px 0 10px;}
-  #bigSushi{font-size:150px; width:260px; height:260px; border-radius:50%; border:6px solid #4a335f; cursor:pointer; background:radial-gradient(circle at 35% 30%,#3d2c52,#1c1426 70%); line-height:1; transition:transform .06s; filter:drop-shadow(0 0 25px rgba(255,90,110,.35)); user-select:none;}
-  #bigSushi:hover{filter:drop-shadow(0 0 35px rgba(255,207,92,.5));}
-  #bigSushi:active{transform:scale(.93);}
-  #bigSushiWrap.pulse #bigSushi{animation:pulse .15s;}
-  @keyframes pulse{50%{transform:scale(1.05);}}
-  .float{position:absolute; font-weight:900; color:#fff; text-shadow:0 2px 4px #000; pointer-events:none; animation:rise 1s ease-out forwards; font-size:20px; z-index:5;}
-  @keyframes rise{to{transform:translateY(-120px); opacity:0;}}
-  #soyLevel{text-align:center; background:#12241a; border:1px solid #2c5c40; border-radius:10px; padding:8px; font-size:13px; margin-top:8px; color:var(--green);}
-  .stats-mini{text-align:center; color:var(--dim); font-size:12px; margin-top:10px; line-height:1.7;}
-  .tabs{display:flex; gap:8px; margin-bottom:12px; flex-wrap:wrap;}
-  .tabs button{flex:1; min-width:110px; background:#2a1f3a; color:var(--text); border:1px solid var(--line); padding:10px; border-radius:10px; cursor:pointer; font-weight:700;}
-  .tabs button.active{background:var(--red); border-color:var(--red); color:#fff;}
-  .buybar{display:flex; gap:6px; margin-bottom:12px; align-items:center; font-size:13px; color:var(--dim);}
-  .buybar button{background:#2e2240; color:var(--text); border:1px solid var(--line); border-radius:8px; padding:6px 12px; cursor:pointer; font-weight:700;}
-  .buybar button.active{background:var(--gold); color:#000; border-color:var(--gold);}
-  .bld{display:flex; align-items:center; gap:12px; background:var(--panel2); border:1px solid var(--line); border-radius:12px; padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:background .1s;}
-  .bld:hover:not(.locked):not(.cant){background:#31223f;}
-  .bld .em{font-size:38px; width:52px; text-align:center;}
-  .bld .info{flex:1;}
-  .bld .info b{font-size:15px;}
-  .bld .info div{font-size:12px; color:var(--dim);}
-  .bld .own{font-size:32px; font-weight:900; color:var(--gold); opacity:.9;}
-  .bld .cost{font-size:13px; color:var(--green); font-weight:700;}
-  .bld.cant{opacity:.55; cursor:not-allowed;}
-  .bld.locked{opacity:.35; filter:grayscale(1); cursor:not-allowed;}
-  .upgrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:8px;}
-  .up{background:#2b2138; border:1px solid var(--gold); border-radius:10px; padding:10px; cursor:pointer; font-size:13px;}
-  .up:hover{background:#3a2c4d;}
-  .up .em{font-size:28px;}
-  .up b{display:block; margin:4px 0;}
-  .up small{color:var(--dim);}
-  .up .cost{color:var(--green); font-weight:700; margin-top:4px; display:block;}
-  .statrow{display:flex; justify-content:space-between; border-bottom:1px dashed var(--line); padding:6px 0; font-size:14px;}
-  .ach{background:#241b31; border:1px solid var(--line); border-radius:8px; padding:8px 10px; margin-bottom:6px; font-size:13px;}
-  .ach.won{border-color:var(--gold);}
-  .ach span{float:right;}
-  #golden{position:fixed; font-size:64px; cursor:pointer; display:none; z-index:50; filter:drop-shadow(0 0 20px gold); animation:wob 1s infinite alternate;}
-  @keyframes wob{to{transform:scale(1.15) rotate(8deg);}}
-  #toasts{position:fixed; bottom:16px; left:50%; transform:translateX(-50%); z-index:60; display:flex; flex-direction:column; gap:8px; align-items:center;}
-  .toast{background:#000d; border:1px solid var(--gold); color:var(--gold); padding:10px 18px; border-radius:12px; font-weight:700; animation:rise 3s forwards;}
-  .hint{font-size:12px; color:var(--dim); text-align:center; margin-top:10px;}
-  button:focus-visible{outline:2px solid var(--gold);}
+:root{--bg:#0d0a14;--bg2:#171021;--card:rgba(255,255,255,.06);--card2:rgba(255,255,255,.09);--line:rgba(255,255,255,.12);--gold:#ffcf5c;--pink:#ff5a8a;--mint:#6ef3c5;--txt:#f7f0e6;--dim:#b9a8cc;--r:18px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{background:radial-gradient(1000px 500px at 15% -5%,#3b2358 0%,transparent 60%),radial-gradient(900px 500px at 95% 10%,#5a1f3d 0%,transparent 55%),radial-gradient(800px 600px at 50% 110%,#0e3a2e 0%,transparent 60%),var(--bg);color:var(--txt);font-family:ui-rounded,"SF Pro Rounded","Segoe UI",system-ui,sans-serif;min-height:100vh;overflow-x:hidden}
+body.light{--bg:#f4ede1;--bg2:#fff8ec;--card:rgba(255,255,255,.85);--card2:#fff;--line:rgba(0,0,0,.1);--txt:#231a2e;--dim:#6b5b7e;background:linear-gradient(180deg,#fff6e6,#ffe9d2)}
+body.shake #app{animation:shk .3s} @keyframes shk{25%{transform:translate(4px,-3px)}50%{transform:translate(-4px,3px)}75%{transform:translate(3px,2px)}}
+#bgFloat{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+#bgFloat span{position:absolute;opacity:.12;animation:drift linear infinite}
+@keyframes drift{from{transform:translateY(110vh) rotate(0)}to{transform:translateY(-15vh) rotate(360deg)}}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+#app{position:relative;z-index:1}
+header{position:sticky;top:0;z-index:30;backdrop-filter:blur(14px);background:rgba(15,10,25,.75);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:10px 16px;flex-wrap:wrap}
+body.light header{background:rgba(255,250,240,.85)}
+.logo{font-size:22px;font-weight:900;background:linear-gradient(90deg,var(--gold),var(--pink),var(--mint));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{font-size:11px;color:var(--dim);font-weight:500}
+.hbtns{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+button{font-family:inherit}
+.hbtns button,.chip{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:12px;padding:7px 11px;cursor:pointer;font-size:13px;font-weight:700;transition:.15s}
+.hbtns button:hover,.chip:hover{background:var(--card2);transform:translateY(-1px)}
+#stars{font-weight:900;color:var(--mint)}
+.ticker{background:rgba(0,0,0,.35);border-bottom:1px solid var(--line);padding:7px 16px;font-size:13px;color:var(--dim);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+body.light .ticker{background:rgba(0,0,0,.05)}
+#buffBar{display:flex;gap:8px;padding:8px 16px;flex-wrap:wrap;max-width:1400px;margin:0 auto}
+.buff{background:linear-gradient(180deg,#6b4a00,#3a2700);border:1px solid var(--gold);color:var(--gold);border-radius:99px;padding:4px 12px;font-size:12px;font-weight:800;box-shadow:0 0 14px rgba(255,207,92,.4)}
+.buff.blue{background:linear-gradient(180deg,#0a3a5c,#061c30);border-color:#5cd2ff;color:#5cd2ff}
+.buff.red{background:linear-gradient(180deg,#5c0a1e,#2b060f);border-color:#ff5a6e;color:#ff8fa0}
+main{display:grid;grid-template-columns:380px 1fr 300px;gap:14px;padding:14px;max-width:1400px;margin:0 auto;align-items:start}
+@media(max-width:1100px){main{grid-template-columns:360px 1fr}.side{grid-column:1/-1;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}}
+@media(max-width:760px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;backdrop-filter:blur(12px);box-shadow:0 12px 40px rgba(0,0,0,.35);margin-bottom:14px}
+body.light .card{box-shadow:0 8px 24px rgba(0,0,0,.08)}
+#sushiCount{font-size:38px;font-weight:900;text-align:center;background:linear-gradient(90deg,#fff,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 2px 0 rgba(0,0,0,.4))}
+.sub{text-align:center;color:var(--dim);font-size:13px;margin-top:2px}
+#comboWrap{background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:12px;padding:8px 10px;margin-top:10px;font-size:12px}
+body.light #comboWrap{background:rgba(0,0,0,.05)}
+#comboBar{height:8px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin-top:6px}
+#comboFill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),var(--pink));border-radius:99px;transition:width .1s}
+#bigWrap{position:relative;display:flex;justify-content:center;padding:16px 0 6px}
+#ring{position:absolute;width:272px;height:272px;border-radius:50%;border:3px dashed rgba(255,207,92,.4);animation:spin 24s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#bigSushi{font-size:140px;width:250px;height:250px;border-radius:50%;border:5px solid rgba(255,207,92,.6);cursor:pointer;background:radial-gradient(circle at 35% 28%,#4a3566,#1a1226 72%);line-height:1;transition:transform .06s;filter:drop-shadow(0 0 30px rgba(255,90,138,.45));user-select:none;position:relative;z-index:2}
+#bigSushi:active{transform:scale(.92)}
+#bigWrap.crit #bigSushi{border-color:#ff3b5c;filter:drop-shadow(0 0 45px #ff3b5c)}
+.float{position:absolute;font-weight:900;color:#fff;text-shadow:0 2px 6px #000;pointer-events:none;animation:rise 1s ease-out forwards;font-size:20px;z-index:5}
+.float.crit{color:#ff5a6e;font-size:30px}
+@keyframes rise{to{transform:translateY(-130px) scale(1.1);opacity:0}}
+#belt{overflow:hidden;border:1px solid var(--line);border-radius:12px;background:rgba(0,0,0,.3);margin-top:10px;white-space:nowrap;padding:8px 0}
+body.light #belt{background:rgba(0,0,0,.04)}
+#beltInner{display:inline-block;animation:belt 22s linear infinite;font-size:26px}
+@keyframes belt{to{transform:translateX(-50%)}}
+.tabs{display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:90px;background:rgba(255,255,255,.06);color:var(--txt);border:1px solid var(--line);padding:9px;border-radius:12px;cursor:pointer;font-weight:800;font-size:13px}
+.tabs button.active{background:linear-gradient(180deg,#ff5a6e,#c81e4a);border-color:transparent;color:#fff;box-shadow:0 4px 18px rgba(255,90,110,.4)}
+.buybar{display:flex;gap:6px;margin-bottom:10px;align-items:center;font-size:12px;color:var(--dim);flex-wrap:wrap}
+.buybar button{background:rgba(255,255,255,.07);color:var(--txt);border:1px solid var(--line);border-radius:9px;padding:6px 11px;cursor:pointer;font-weight:800}
+.buybar button.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.bld{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.045);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:8px;cursor:pointer;transition:.12s}
+.bld:hover:not(.cant):not(.locked){background:rgba(255,255,255,.1);transform:translateX(3px)}
+.bld .em{font-size:36px;width:50px;text-align:center;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5))}
+.bld .info{flex:1}.bld .info b{font-size:14px}.bld .info div{font-size:11.5px;color:var(--dim);line-height:1.5}
+.bld .own{font-size:28px;font-weight:900;color:var(--gold)}
+.bld .cost{font-size:12.5px;color:var(--mint);font-weight:800}
+.bld.cant{opacity:.55}.bld.locked{opacity:.35;filter:grayscale(1)}
+.upgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:8px}
+.up{background:linear-gradient(180deg,rgba(255,207,92,.14),rgba(255,207,92,.04));border:1px solid var(--gold);border-radius:12px;padding:10px;cursor:pointer;font-size:12.5px;transition:.12s}
+.up:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(255,207,92,.25)}
+.up .em{font-size:26px}.up b{display:block;margin:4px 0}.up small{color:var(--dim)}.up .cost{color:var(--mint);font-weight:800;margin-top:4px;display:block}
+.dex{display:grid;grid-template-columns:repeat(auto-fill,minmax(95px,1fr));gap:8px}
+.dexd{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center;font-size:12px}
+.dexd .e{font-size:32px}.dexd.lock{opacity:.35;filter:grayscale(1)}
+.dexd small{color:var(--dim)}
+.statrow{display:flex;justify-content:space-between;border-bottom:1px dashed var(--line);padding:6px 0;font-size:13.5px}
+.ach{background:rgba(255,255,255,.05);border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin-bottom:6px;font-size:12.5px}
+.ach.won{border-color:var(--gold);box-shadow:0 0 12px rgba(255,207,92,.15)}
+#golden,#ruby,#diamond{position:fixed;font-size:64px;cursor:pointer;display:none;z-index:70;animation:wob .8s infinite alternate}
+#golden{filter:drop-shadow(0 0 22px gold)}#ruby{filter:drop-shadow(0 0 22px #ff3b5c)}#diamond{filter:drop-shadow(0 0 22px #5cd2ff)}
+@keyframes wob{to{transform:scale(1.15) rotate(10deg)}}
+#toasts{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:90;display:flex;flex-direction:column;gap:8px;align-items:center;max-width:92vw}
+.toast{background:rgba(10,6,16,.92);border:1px solid var(--gold);color:var(--gold);padding:10px 18px;border-radius:14px;font-weight:800;animation:rise 3.4s forwards;font-size:14px;max-width:92vw;text-align:center}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:100;padding:16px}
+.modal.open{display:flex}
+.mbox{background:#1c1428;color:#fff;border:1px solid var(--gold);border-radius:20px;padding:24px;max-width:420px;width:100%;text-align:center;box-shadow:0 20px 80px rgba(0,0,0,.6)}
+.mbox h2{margin-bottom:8px}.mbox p{color:#cbbdde;font-size:14px;line-height:1.6;margin-bottom:14px}
+.mbox button{background:linear-gradient(180deg,#ff5a6e,#c81e4a);border:0;color:#fff;font-weight:900;padding:12px 22px;border-radius:12px;cursor:pointer;font-size:15px}
+#cat{font-size:52px;cursor:pointer;transition:.15s;display:inline-block;user-select:none}
+#cat:hover{transform:scale(1.12)}
+.pbtn{width:100%;background:linear-gradient(180deg,#2e7d5b,#17452f);border:1px solid #3fa87c;color:#fff;font-weight:800;border-radius:12px;padding:10px;cursor:pointer;margin-top:8px}
+.pbtn.gold{background:linear-gradient(180deg,#8a6a00,#4d3a00);border-color:var(--gold);color:var(--gold)}
+.pbtn.red{background:linear-gradient(180deg,#7d2e41,#451724);border-color:#ff5a6e}
+.pbtn:disabled{opacity:.5;cursor:not-allowed}
+.setrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line);font-size:13.5px}
+.setrow input{transform:scale(1.3)}
+#spark{width:100%;height:64px;background:rgba(0,0,0,.3);border-radius:10px;border:1px solid var(--line)}
+h3.sec{font-size:13px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin:4px 0 10px}
+#eventFeed{font-size:12.5px;color:var(--dim);line-height:1.7;max-height:120px;overflow:auto}
+::-webkit-scrollbar{width:10px}::-webkit-scrollbar-thumb{background:#4a3566;border-radius:99px}
 </style>
 </head>
 <body>
-<div class="topbar">
-  <div class="logo">🍣 Sushi Clicker <small>like cookie clicker, but raw</small></div>
-  <div class="top-actions">
-    <button id="muteBtn" title="sound">🔊</button>
-    <button id="saveBtn">💾 Save</button>
-    <button id="expBtn">📤 Export</button>
-    <button id="impBtn">📥 Import</button>
-    <button id="resetBtn">🗑 Reset</button>
-  </div>
+<div id="bgFloat"></div><canvas id="fx"></canvas>
+<div id="app">
+<header>
+<div class="logo">🍣 Sushi Clicker <small>2.0 • wasabi edition</small></div>
+<div style="font-size:13px">⭐ <span id="stars">0</span> wasabi stars</div>
+<div class="hbtns">
+<button id="themeBtn">🌙</button><button id="muteBtn">🔊</button><button id="musicBtn">🎵</button>
+<button id="saveBtn">💾</button><button id="expBtn">📤</button><button id="impBtn">📥</button><button id="resetBtn">🗑</button>
 </div>
-<div class="ticker">📰 <span id="newsText">Welcome to Sushi Clicker! Click the big sushi.</span></div>
+</header>
+<div class="ticker" id="ticker">📰 <span id="newsText">Welcome! Click the big sushi.</span></div>
 <div id="buffBar"></div>
-<main class="game">
-  <section class="panel">
-    <div class="counter">
-      <div id="sushiCount">0 sushi</div>
-      <div id="perSecond">per second: 0</div>
-      <div id="perClick">per click: 1</div>
-    </div>
-    <div id="bigSushiWrap"><button id="bigSushi" aria-label="click for sushi">🍣</button></div>
-    <div id="soyLevel">🍶 Soy Sauce: Level 0 (CPS +0%)</div>
-    <div class="stats-mini" id="statsMini"></div>
-    <div class="hint">Tip: golden sushi appears sometimes — click it fast! ✨</div>
-  </section>
-  <section class="panel">
-    <div class="tabs">
-      <button id="tabB" class="active">🏠 Farm</button>
-      <button id="tabU">⬆️ Upgrades <span id="upBadge"></span></button>
-      <button id="tabS">📊 Stats</button>
-    </div>
-    <div id="pageB">
-      <div class="buybar">Buy: 
-        <button data-amt="1" class="active">x1</button>
-        <button data-amt="10">x10</button>
-        <button data-amt="100">x100</button>
-        <button data-amt="max">Max</button>
-      </div>
-      <div id="buildingList"></div>
-    </div>
-    <div id="pageU" style="display:none">
-      <div class="upgrid" id="upgradeList"></div>
-    </div>
-    <div id="pageS" style="display:none">
-      <div id="statsPanel"></div>
-      <h3 style="margin:12px 0 8px">🏆 Achievements (<span id="achCount">0</span>)</h3>
-      <div id="achList"></div>
-    </div>
-  </section>
+<main>
+<section>
+<div class="card">
+<div id="sushiCount">0 sushi</div>
+<div class="sub" id="perSecond">per second: 0</div>
+<div class="sub" id="perClick">per click: 1</div>
+<div id="comboWrap">🔥 Combo <b id="comboX">x1.0</b> <span id="comboN"></span><div id="comboBar"><div id="comboFill"></div></div></div>
+<div id="bigWrap"><div id="ring"></div><button id="bigSushi">🍣</button></div>
+<div class="sub" id="soyLevel"></div>
+<div id="belt"><div id="beltInner"></div></div>
+<canvas id="spark"></canvas>
+<div class="sub" id="statsMini" style="margin-top:8px;line-height:1.7"></div>
+</div>
+<div class="card"><h3 class="sec">🐱 Lucky Cat — auto-clicker</h3>
+<div style="display:flex;gap:12px;align-items:center"><span id="cat">🐱</span><div style="font-size:13px" id="catInfo"></div></div>
+<button class="pbtn" id="catUp">Level up cat</button>
+</div>
+</section>
+<section>
+<div class="card">
+<div class="tabs">
+<button id="tB" class="active">🏠 Farm</button><button id="tU">⬆️ Up <span id="upBadge"></span></button>
+<button id="tD">🍱 Dex</button><button id="tP">⭐ Stars</button><button id="tS">📊 Stats</button>
+</div>
+<div id="pB"><div class="buybar">Buy: <button data-amt="1" class="active">x1</button><button data-amt="10">x10</button><button data-amt="100">x100</button><button data-amt="max">Max</button></div><div id="buildingList"></div></div>
+<div id="pU" style="display:none"><div class="upgrid" id="upgradeList"></div></div>
+<div id="pD" style="display:none"><p style="font-size:13px;color:var(--dim);margin-bottom:10px">Unlock sushi by baking more all-time. Each gives +1% CPS.</p><div class="dex" id="dexList"></div></div>
+<div id="pP" style="display:none"><div id="prestigeBox"></div></div>
+<div id="pS" style="display:none"><div id="statsPanel"></div><h3 class="sec" style="margin:12px 0 8px">🏆 Achievements (<span id="achCount"></span>)</h3><div id="achList"></div></div>
+</div>
+</section>
+<div class="side"><div>
+<div class="card"><h3 class="sec">🎰 Wasabi Roulette</h3>
+<div style="font-size:52px;text-align:center" id="slot">🎰</div>
+<div style="font-size:13px;color:var(--dim);text-align:center" id="slotMsg">Bet sushi. 40% x2 • 15% x5</div>
+<div style="display:flex;gap:6px;margin-top:8px"><button class="pbtn" data-bet="0.01">1%</button><button class="pbtn" data-bet="0.1">10%</button><button class="pbtn" data-bet="0.5">50%</button></div>
+</div>
+<div class="card"><h3 class="sec">🎲 Restaurant events</h3><div id="eventFeed">Quiet day at the restaurant...<br></div></div>
+<div class="card"><h3 class="sec">⚙️ Settings</h3>
+<div class="setrow"><span>✨ Particles</span><input type="checkbox" id="sParticles" checked></div>
+<div class="setrow"><span>📳 Screen shake</span><input type="checkbox" id="sShake" checked></div>
+<div class="setrow"><span>🔢 Full numbers</span><input type="checkbox" id="sFull"></div>
+<div class="setrow"><span>📰 Ticker</span><input type="checkbox" id="sTicker" checked></div>
+<div class="sub" id="saveNote" style="margin-top:8px">autosaved ✓</div>
+</div>
+</div></div>
 </main>
-<div id="golden">🍣</div>
+</div>
+<div id="golden">🍣</div><div id="ruby">🍣</div><div id="diamond">💎</div>
 <div id="toasts"></div>
+<div class="modal" id="offlineModal"><div class="mbox"><h2>🍱 Welcome back, chef!</h2><p id="offlineText"></p><button onclick="document.getElementById('offlineModal').classList.remove('open')">Let's roll! 🍣</button></div></div>
 <script>
 'use strict';
-/* ---------- DATA ---------- */
+/* ===== DATA ===== */
 const BUILDINGS=[
-  {id:'chop', name:'Apprentice Chopsticks', emoji:'🥢', desc:'Auto-picks sushi for you.', baseCost:15, baseCps:0.1},
-  {id:'kitchen', name:'Home Kitchen', emoji:'🍳', desc:'Rolls maki on the stove.', baseCost:100, baseCps:1},
-  {id:'chef', name:'Sushi Chef', emoji:'👨‍🍳', desc:'A trained master. Fast hands.', baseCost:1100, baseCps:8},
-  {id:'boat', name:'Fishing Boat', emoji:'🎣', desc:'Fresh fish straight from the sea.', baseCost:12000, baseCps:47},
-  {id:'rice', name:'Rice Paddy Farm', emoji:'🌾', desc:'Endless perfect rice.', baseCost:130000, baseCps:260},
-  {id:'tuna', name:'Tuna Farm', emoji:'🐟', desc:'Fat bluefin, on demand.', baseCost:1400000, baseCps:1400},
-  {id:'train', name:'Sushi Train', emoji:'🚂', desc:'Conveyor-belt deliciousness.', baseCost:20000000, baseCps:7800},
-  {id:'factory', name:'Sushi Factory', emoji:'🏭', desc:'Industrial-grade nigiri.', baseCost:330000000, baseCps:44000},
-  {id:'wasabi', name:'Wasabi Lab', emoji:'🧪', desc:'Science with a kick.', baseCost:5100000000, baseCps:260000},
-  {id:'portal', name:'Salmon Portal', emoji:'🌀', desc:'Summons salmon from another dimension.', baseCost:75000000000, baseCps:1600000},
-  {id:'temple', name:'Dragon Roll Temple', emoji:'🐉', desc:'Ancient sushi gods smile on you.', baseCost:1000000000000, baseCps:10000000},
-];
-const STATIC_UPGRADES=[
-  {id:'click1', name:'Reinforced Chopsticks', icon:'🥢', desc:'Clicking gains +1 sushi.', cost:100, req:s=>s.totalClicks>=15},
-  {id:'click2', name:'Titanium Chopsticks', icon:'🍴', desc:'Click power x2.', cost:5000, req:s=>s.totalClicks>=100},
-  {id:'click3', name:'Wasabi Fingers', icon:'🌶️', desc:'Clicking gains +5 sushi.', cost:500000, req:s=>s.handmade>=5000},
-  {id:'click4', name:'Dragon Grip', icon:'🐲', desc:'Click power x2.', cost:50000000, req:s=>s.handmade>=50000},
-  {id:'click5', name:'Golden Palms', icon:'🙌', desc:'Click gains +15% of your CPS.', cost:5000000000, req:s=>s.handmade>=500000},
-  {id:'soy1', name:'Soy Sauce Glaze', icon:'🍶', desc:'All production x1.5.', cost:1000000, req:s=>s.totalEarned>=800000},
-  {id:'soy2', name:'Premium Nori', icon:'🌿', desc:'All production x2.', cost:100000000, req:s=>s.totalEarned>=50000000},
-  {id:'soy3', name:'Omakase Spirit', icon:'👺', desc:'All production x2.', cost:10000000000, req:s=>s.totalEarned>=5000000000},
-];
+{id:'chop',name:'Apprentice Chopsticks',emoji:'🥢',desc:'Auto-picks sushi.',baseCost:15,baseCps:.1},
+{id:'kitchen',name:'Home Kitchen',emoji:'🍳',desc:'Maki on the stove.',baseCost:100,baseCps:1},
+{id:'chef',name:'Sushi Chef',emoji:'👨‍🍳',desc:'Fast hands.',baseCost:1100,baseCps:8},
+{id:'boat',name:'Fishing Boat',emoji:'🎣',desc:'Fresh fish daily.',baseCost:12000,baseCps:47},
+{id:'rice',name:'Rice Paddy Farm',emoji:'🌾',desc:'Perfect rice.',baseCost:13e4,baseCps:260},
+{id:'tuna',name:'Tuna Farm',emoji:'🐟',desc:'Fat bluefin.',baseCost:14e5,baseCps:1400},
+{id:'train',name:'Sushi Train',emoji:'🚂',desc:'Conveyor deliciousness.',baseCost:2e7,baseCps:7800},
+{id:'factory',name:'Sushi Factory',emoji:'🏭',desc:'Industrial nigiri.',baseCost:33e7,baseCps:44e3},
+{id:'wasabi',name:'Wasabi Lab',emoji:'🧪',desc:'Science with a kick.',baseCost:51e8,baseCps:26e4},
+{id:'portal',name:'Salmon Portal',emoji:'🌀',desc:'Other-dimension salmon.',baseCost:75e9,baseCps:16e5},
+{id:'temple',name:'Dragon Roll Temple',emoji:'🐉',desc:'Sushi gods smile.',baseCost:1e12,baseCps:1e7},
+{id:'sake',name:'Sake Brewery',emoji:'🍶',desc:'Pairs perfectly. +vibes.',baseCost:14e12,baseCps:65e6},
+{id:'ninja',name:'Ninja Delivery',emoji:'🥷',desc:'30-min delivery or else.',baseCost:17e13,baseCps:43e7},
+{id:'catcafe',name:'Cat Café',emoji:'🐈',desc:'Cats make rice better.',baseCost:21e14,baseCps:29e8},
+{id:'tower',name:'Omakase Tower',emoji:'🗼',desc:'Sky-high tasting menu.',baseCost:26e15,baseCps:21e9},
+{id:'fuji',name:'Mt. Fuji Shrine',emoji:'🗻',desc:'Blessed by the mountain.',baseCost:31e16,baseCps:175e9}];
+const UPGRADES=[
+{id:'click1',name:'Reinforced Chopsticks',icon:'🥢',desc:'+1 per click.',cost:100,req:s=>s.totalClicks>=15},
+{id:'click2',name:'Titanium Chopsticks',icon:'🍴',desc:'Click x2.',cost:5e3,req:s=>s.totalClicks>=100},
+{id:'click3',name:'Wasabi Fingers',icon:'🌶️',desc:'+5 per click.',cost:5e5,req:s=>s.handmade>=5e3},
+{id:'click4',name:'Dragon Grip',icon:'🐲',desc:'Click x2.',cost:5e7,req:s=>s.handmade>=5e4},
+{id:'click5',name:'Golden Palms',icon:'🙌',desc:'Click +15% of CPS.',cost:5e9,req:s=>s.handmade>=5e5},
+{id:'click6',name:'Combo Master',icon:'🔥',desc:'Combo builds 2x faster.',cost:5e11,req:s=>s.maxCombo>=30},
+{id:'soy1',name:'Soy Glaze',icon:'🍶',desc:'All x1.5.',cost:1e6,req:s=>s.totalEarned>=8e5},
+{id:'soy2',name:'Premium Nori',icon:'🌿',desc:'All x2.',cost:1e8,req:s=>s.totalEarned>=5e7},
+{id:'soy3',name:'Omakase Spirit',icon:'👺',desc:'All x2.',cost:1e10,req:s=>s.totalEarned>=5e9},
+{id:'soy4',name:'Truffle Oil',icon:'🫒',desc:'All x1.5.',cost:1e13,req:s=>s.totalEarned>=5e12},
+{id:'syn1',name:'Chef x Kitchen Synergy',icon:'🤝',desc:'Kitchens x2 if 10+ Chefs.',cost:5e6,req:s=>(s.buildings.chef||0)>=10,eff:{kitchen:2}},
+{id:'syn2',name:'Boat x Tuna Synergy',icon:'🤝',desc:'Tuna Farms x2 if 10+ Boats.',cost:5e8,req:s=>(s.buildings.boat||0)>=10,eff:{tuna:2}},
+{id:'syn3',name:'Rice x Wasabi Synergy',icon:'🤝',desc:'Rice Farms x2 if 10+ Labs.',cost:5e11,req:s=>(s.buildings.wasabi||0)>=10,eff:{rice:2}},
+{id:'syn4',name:'Cat x Tower Synergy',icon:'🤝',desc:'Towers x2 if 5+ Cat Cafés.',cost:1e16,req:s=>(s.buildings.catcafe||0)>=5,eff:{tower:2}},
+{id:'syn5',name:'Ninja x Train Synergy',icon:'🤝',desc:'Trains x2 if 10+ Ninjas.',cost:1e15,req:s=>(s.buildings.ninja||0)>=10,eff:{train:2}},
+{id:'syn6',name:'Fuji Blessing',icon:'⛩️',desc:'Everything x1.25 with 1+ Shrine.',cost:5e17,req:s=>(s.buildings.fuji||0)>=1}];
 BUILDINGS.forEach(b=>{
-  STATIC_UPGRADES.push({id:b.id+'-m1', building:b.id, mult:2, name:b.name+' Mastery I', icon:b.emoji, desc:b.name+'s are twice as efficient.', cost:b.baseCost*12, req:s=>(s.buildings[b.id]||0)>=10});
-  STATIC_UPGRADES.push({id:b.id+'-m2', building:b.id, mult:2, name:b.name+' Mastery II', icon:b.emoji, desc:b.name+'s are twice as efficient.', cost:b.baseCost*250, req:s=>(s.buildings[b.id]||0)>=50});
-});
-const UPGRADES=STATIC_UPGRADES;
-const ACH=[
-  {id:'c1', name:'First Bite', desc:'Click 10 times.', check:s=>s.totalClicks>=10},
-  {id:'c2', name:'Chopstick Pro', desc:'Click 500 times.', check:s=>s.totalClicks>=500},
-  {id:'c3', name:'Carpal Tunnel', desc:'Click 5,000 times.', check:s=>s.totalClicks>=5000},
-  {id:'e1', name:'Maki Beginner', desc:'Bake 1,000 sushi total.', check:s=>s.totalEarned>=1000},
-  {id:'e2', name:'Roll Dealer', desc:'Bake 1M sushi total.', check:s=>s.totalEarned>=1e6},
-  {id:'e3', name:'Sushi Millionaire', desc:'Bake 100M sushi total.', check:s=>s.totalEarned>=1e8},
-  {id:'e4', name:'Sushi Empire', desc:'Bake 10B sushi total.', check:s=>s.totalEarned>=1e10},
-  {id:'p1', name:'Nice Spread', desc:'10 sushi per second.', check:()=>cps()>=10},
-  {id:'p2', name:'Conveyor Belt', desc:'500 sushi per second.', check:()=>cps()>=500},
-  {id:'p3', name:'Fish Volcano', desc:'50,000 sushi per second.', check:()=>cps()>=50000},
-  {id:'b1', name:'Small Family', desc:'Own 10 buildings.', check:s=>totalBuildings(s)>=10},
-  {id:'b2', name:'Franchise', desc:'Own 75 buildings.', check:s=>totalBuildings(s)>=75},
-  {id:'b3', name:'Zaibatsu', desc:'Own 200 buildings.', check:s=>totalBuildings(s)>=200},
-  {id:'g1', name:'Golden Catch', desc:'Click 1 golden sushi.', check:s=>(s.golden||0)>=1},
-  {id:'g2', name:'Shiny Hunter', desc:'Click 7 golden sushi.', check:s=>(s.golden||0)>=7},
-];
-const NEWS=[
-  'News: local chef claims sushi "just hits different when you click it".',
-  'News: scientists confirm clicking sushi burns exactly 0 calories.',
-  'News: tuna stocks rise as demand from clickers explodes.',
-  'News: wasabi shortage blamed on "some guy clicking too fast".',
-  'News: dragon spotted guarding a sushi temple. Locals unbothered.',
-  'News: soy sauce sales up 400%. Nobody knows why.',
-  'Tip: buying in x10 bulk is often the best value.',
-  'Tip: upgrades in the ⬆️ tab multiply your farms forever.',
-  'Tip: golden sushi brings frenzies. Keep an eye out!',
-];
-/* ---------- STATE ---------- */
-const SAVE_KEY='sushiClickerSaveV1';
-let state=fresh();
-function fresh(){return{sushi:0,totalEarned:0,totalClicks:0,handmade:0,buildings:{},upgrades:{},ach:{},golden:0,playSec:0,muted:false,started:Date.now()};}
-let buyAmt=1, frenzyUntil=0, clickFrenzyUntil=0, audioCtx=null;
-function totalBuildings(s){return Object.values(s.buildings).reduce((a,b)=>a+b,0);}
-/* ---------- HELPERS ---------- */
+UPGRADES.push({id:b.id+'-m1',building:b.id,mult:2,name:b.name+' I',icon:b.emoji,desc:b.name+' x2.',cost:b.baseCost*12,req:s=>(s.buildings[b.id]||0)>=10});
+UPGRADES.push({id:b.id+'-m2',building:b.id,mult:2,name:b.name+' II',icon:b.emoji,desc:b.name+' x2.',cost:b.baseCost*250,req:s=>(s.buildings[b.id]||0)>=50});});
+const DEX=[
+{id:'maki',e:'🍣',n:'Salmon Nigiri',at:100},{id:'tuna',e:'🍱',n:'Bento Box',at:1e4},
+{id:'onig',e:'🍙',n:'Onigiri',at:1e6},{id:'shrim',e:'🦐',n:'Ebi',at:1e8},
+{id:'octo',e:'🐙',n:'Tako',at:1e10},{id:'crab',e:'🦀',n:'Crab Roll',at:1e12},
+{id:'blow',e:'🐡',n:'Fugu (risky)',at:1e14},{id:'whale',e:'🐳',n:'Legend Whale',at:1e16},
+{id:'drag',e:'🐉',n:'Dragon Roll',at:1e18},{id:'crown',e:'👑',n:'Emperor Platter',at:1e20},
+{id:'alien',e:'👽',n:'Area 51 Roll',at:1e22},{id:'uni',e:'🌌',n:'Universe Sushi',at:1e24}];
+const P_UP=[{id:'p_head',n:'Golden Headband',d:'Start each run with 10k sushi.',c:1},{id:'p_paws',n:'Lucky Paws',d:'Cat is 2x stronger.',c:2},{id:'p_mag',n:'Golden Magnet',d:'Golden sushi appears 2x more.',c:3},{id:'p_soul',n:'Omakase Soul',d:'+25% CPS forever.',c:5}];
+const EVENTS=[
+{n:'🧐 Food Critic!',t:'A glowing review! +60s of production!',f:()=>{const g=rawCps()*60;gain(g);}},
+{n:'🎏 Fish Festival!',t:'Frenzy! CPS x7 for 30s!',f:()=>{frenzyUntil=Date.now()+30000;}},
+{n:'🧼 Health Inspector!',t:'Fine: -10% bank, but +25% CPS for 60s!',f:()=>{state.sushi*=0.9;inspUntil=Date.now()+60000;}},
+{n:'🌧️ Rainy Day!',t:'Cozy weather. Clicks x3 for 30s!',f:()=>{rainUntil=Date.now()+30000;}},
+{n:'🐱 Stray Cat!',t:'It naps on the rice. Cat bonus x3 for 60s!',f:()=>{catBoostUntil=Date.now()+60000;}},
+{n:'🦑 Kraken Attack!',t:'It stole sushi... but left treasure! +15s production per building!',f:()=>{gain(rawCps()*15*Math.min(totalB(state),50)/10+rawCps()*15);}}];
+const NEWS=['News: local chef claims sushi "hits different when clicked".','News: clicking sushi burns 0 calories, scientists confirm.','News: tuna stocks soar on clicker demand.','News: wasabi shortage blamed on fast clicker.','News: dragon guards sushi temple. Locals unbothered.','Tip: x10 bulk is best value early.','Tip: synergy upgrades are secretly OP.','Tip: prestige early, prestige often.'];
+/* ===== STATE ===== */
+const KEY='sushiClickerV2';
+let S=fresh(),buyAmt=1,frenzyUntil=0,clickFrenzyUntil=0,inspUntil=0,rainUntil=0,catBoostUntil=0;
+let combo=[],audioCtx=null,musicTimer=null,cpsHist=new Array(60).fill(0);
+function fresh(){return{sushi:0,totalEarned:0,runEarned:0,totalClicks:0,handmade:0,buildings:{},upgrades:{},ach:{},golden:0,playSec:0,muted:false,music:false,theme:'dark',stars:0,ascensions:0,pUp:{},catLvl:1,roulette:0,maxCombo:0,lastSeen:Date.now(),set:{particles:true,shake:true,full:false,ticker:true}};}
 const $=id=>document.getElementById(id);
-function fmt(n){
-  if(n<1000)return Math.floor(n).toString();
-  const u=['K','M','B','T','Qa','Qi','Sx','Sp','Oc','No'];
-  let i=-1,v=n;
-  while(v>=1000&&i<u.length-1){v/=1000;i++;}
-  return (v>=100?v.toFixed(0):v>=10?v.toFixed(1):v.toFixed(2))+u[i];
-}
-function buildingCost(b,owned,qty){
-  let c=0;
-  for(let i=0;i<qty;i++)c+=b.baseCost*Math.pow(1.15,owned+i);
-  return c;
-}
-function maxAffordable(b,owned,money){
-  let q=0,c=0;
-  while(q<1000){const n=b.baseCost*Math.pow(1.15,owned+q); if(c+n>money)break; c+=n; q++;}
-  return{q,cost:c};
-}
-function buildingMult(id){
-  let m=1;
-  for(const u of UPGRADES)if(u.building===id&&state.upgrades[u.id])m*=u.mult;
-  return m;
-}
-function achCount(){return Object.keys(state.ach).length;}
-function soyBonus(){return 1+Math.floor(achCount()/3)*0.02;}
-function rawCps(){
-  let s=0;
-  for(const b of BUILDINGS)s+=(state.buildings[b.id]||0)*b.baseCps*buildingMult(b.id);
-  let g=1;
-  if(state.upgrades.soy1)g*=1.5;
-  if(state.upgrades.soy2)g*=2;
-  if(state.upgrades.soy3)g*=2;
-  return s*g*soyBonus();
-}
-function cps(){
-  let v=rawCps();
-  if(Date.now()<frenzyUntil)v*=7;
-  return v;
-}
-function clickBase(){
-  let p=1;
-  if(state.upgrades.click1)p+=1;
-  if(state.upgrades.click3)p+=5;
-  if(state.upgrades.click2)p*=2;
-  if(state.upgrades.click4)p*=2;
-  return p;
-}
-function clickGain(){let g=clickBase(); if(state.upgrades.click5)g+=rawCps()*0.15; if(Date.now()<clickFrenzyUntil)g*=777; return g;}
-function pop(){
-  if(state.muted)return;
-  try{
-    audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();
-    const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-    o.connect(g); g.connect(audioCtx.destination);
-    o.frequency.value=400+Math.random()*300; o.type='sine';
-    g.gain.setValueAtTime(0.08,audioCtx.currentTime);
-    g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+0.09);
-    o.start(); o.stop(audioCtx.currentTime+0.1);
-  }catch(e){}
-}
-function toast(msg){const d=document.createElement('div'); d.className='toast'; d.textContent=msg; $('toasts').appendChild(d); setTimeout(()=>d.remove(),3000);}
-/* ---------- ACTIONS ---------- */
-function doClick(ev){
-  const g=clickGain();
-  state.sushi+=g; state.totalEarned+=g; state.handmade+=g; state.totalClicks++;
-  pop();
-  const w=$('bigSushiWrap');
-  w.classList.remove('pulse'); void w.offsetWidth; w.classList.add('pulse');
-  const f=document.createElement('div');
-  f.className='float'; f.textContent='+'+fmt(g);
-  const r=w.getBoundingClientRect();
-  f.style.left=(r.width/2+(Math.random()*120-60))+'px';
-  f.style.top='60px';
-  w.appendChild(f); setTimeout(()=>f.remove(),1000);
-  updateHUD();
-}
-function buyBuilding(id){
-  const b=BUILDINGS.find(x=>x.id===id);
-  const owned=state.buildings[id]||0;
-  let q,cost;
-  if(buyAmt==='max'){const r=maxAffordable(b,owned,state.sushi); q=r.q; cost=r.cost;}
-  else{q=buyAmt; cost=buildingCost(b,owned,q);}
-  if(q<1||state.sushi<cost){pop(); return;}
-  state.sushi-=cost; state.buildings[id]=owned+q;
-  pop(); renderShop(); updateHUD(); save();
-}
-function buyUpgrade(id){
-  const u=UPGRADES.find(x=>x.id===id);
-  if(!u||state.upgrades[id]||state.sushi<u.cost)return;
-  state.sushi-=u.cost; state.upgrades[id]=true;
-  toast(u.icon+' '+u.name+' unlocked!'); pop();
-  renderShop(); updateHUD(); save();
-}
-function availableUpgrades(){return UPGRADES.filter(u=>!state.upgrades[u.id]&&u.req(state));}
-/* ---------- GOLDEN SUSHI ---------- */
-function goldenLoop(){
-  const wait=75000+Math.random()*105000;
-  setTimeout(()=>{
-    if(document.hidden){goldenLoop(); return;}
-    showGolden(); goldenLoop();
-  },wait);
-}
-function showGolden(){
-  const g=$('golden');
-  g.style.display='block';
-  g.style.left=(10+Math.random()*80)+'vw';
-  g.style.top=(15+Math.random()*65)+'vh';
-  const t=setTimeout(hideGolden,13000);
-  g.onclick=()=>{
-    clearTimeout(t); hideGolden();
-    state.golden=(state.golden||0)+1;
-    const roll=Math.random(), bank=state.sushi, base=Math.max(rawCps(),1);
-    if(roll<0.4){frenzyUntil=Date.now()+30000; toast('✨ FRENZY! CPS x7 for 30s!');}
-    else if(roll<0.75){const bonus=Math.min(bank*0.15,base*900)+13; state.sushi+=bonus; state.totalEarned+=bonus; toast('✨ LUCKY! +'+fmt(bonus)+' sushi!');}
-    else if(roll<0.9){clickFrenzyUntil=Date.now()+15000; toast('✨ CLICK FRENZY! Clicks x777 for 15s!');}
-    else{const bonus=base*60; state.sushi+=bonus; state.totalEarned+=bonus; toast('✨ SUSHI RUSH! +'+fmt(bonus)+' sushi (60s of production)!');}
-    pop(); checkAch(); updateHUD(); save();
-  };
-}
-function hideGolden(){$('golden').style.display='none'; $('golden').onclick=null;}
-/* ---------- RENDER ---------- */
-function updateHUD(){
-  $('sushiCount').textContent=fmt(state.sushi)+' sushi';
-  $('perSecond').textContent='per second: '+fmt(cps());
-  $('perClick').textContent='per click: '+fmt(clickGain());
-  const lvl=Math.floor(achCount()/3);
-  $('soyLevel').textContent='🍶 Soy Sauce: Level '+lvl+' (CPS +'+(lvl*2)+'%) — '+achCount()+' achievements';
-  const mins=Math.floor(state.playSec/60), secs=state.playSec%60;
-  $('statsMini').innerHTML='total baked: <b>'+fmt(state.totalEarned)+'</b> 🍣<br>handmade: '+fmt(state.handmade)+' • clicks: '+fmt(state.totalClicks)+'<br>buildings: '+totalBuildings(state)+' • golden: '+(state.golden||0)+'<br>time: '+mins+'m '+secs+'s';
-  const bb=$('buffBar'); bb.innerHTML='';
-  if(Date.now()<frenzyUntil){const s=Math.ceil((frenzyUntil-Date.now())/1000); bb.innerHTML+='<div class="buff">✨ FRENZY x7 — '+s+'s</div>';}
-  if(Date.now()<clickFrenzyUntil){const s=Math.ceil((clickFrenzyUntil-Date.now())/1000); bb.innerHTML+='<div class="buff">👆 CLICK x777 — '+s+'s</div>';}
-}
-function renderShop(){
-  const bl=$('buildingList'); bl.innerHTML='';
-  for(const b of BUILDINGS){
-    const owned=state.buildings[b.id]||0;
-    const seen=state.totalEarned>=b.baseCost*0.25||owned>0;
-    let q=buyAmt==='max'?maxAffordable(b,owned,state.sushi).q:buyAmt;
-    if(q<1)q=1;
-    const cost=buyAmt==='max'?maxAffordable(b,owned,state.sushi).cost:buildingCost(b,owned,q);
-    const cant=state.sushi<cost;
-    const d=document.createElement('div');
-    d.className='bld'+(cant?' cant':'')+(seen?'':' locked');
-    d.innerHTML='<div class="em">'+(seen?b.emoji:'❓')+'</div><div class="info"><b>'+(seen?b.name:'???')+'</b><div>'+(seen?b.desc+'<br>each: '+fmt(b.baseCps*buildingMult(b.id))+'/s • total: '+fmt(owned*b.baseCps*buildingMult(b.id))+'/s':'Bake more sushi to discover.')+'</div><div class="cost">'+(seen?(buyAmt==='max'?'buy max ('+maxAffordable(b,owned,state.sushi).q+')':'buy x'+q)+' — 🍣 '+fmt(cost):'')+'</div></div><div class="own">'+(owned||'')+'</div>';
-    if(seen&&!cant)d.onclick=()=>buyBuilding(b.id);
-    bl.appendChild(d);
-  }
-  const ul=$('upgradeList'); ul.innerHTML='';
-  const av=availableUpgrades();
-  $('upBadge').textContent=av.length?'('+av.length+')':'';
-  if(!av.length)ul.innerHTML='<p style="color:var(--dim)">No upgrades available yet. Keep baking! 🍣</p>';
-  for(const u of av){
-    const cant=state.sushi<u.cost;
-    const d=document.createElement('div');
-    d.className='up'; d.style.opacity=cant?'.6':'1';
-    d.innerHTML='<div class="em">'+u.icon+'</div><b>'+u.name+'</b><small>'+u.desc+'</small><span class="cost">🍣 '+fmt(u.cost)+'</span>';
-    if(!cant)d.onclick=()=>buyUpgrade(u.id);
-    ul.appendChild(d);
-  }
-  renderStats();
-}
-function renderStats(){
-  const ownedUp=Object.keys(state.upgrades).length;
-  $('statsPanel').innerHTML=
-    row('Sushi in bank',fmt(state.sushi))+row('Total baked (all time)',fmt(state.totalEarned))+
-    row('Sushi per second',fmt(cps()))+row('Sushi per click',fmt(clickGain()))+
-    row('Buildings owned',totalBuildings(state))+row('Upgrades owned',ownedUp+' / '+UPGRADES.length)+
-    row('Golden sushi clicked',state.golden||0)+row('Total clicks',state.totalClicks);
-  const al=$('achList'); al.innerHTML='';
-  $('achCount').textContent=achCount()+' / '+ACH.length;
-  for(const a of ACH){
-    const won=!!state.ach[a.id];
-    const d=document.createElement('div');
-    d.className='ach'+(won?' won':'');
-    d.innerHTML=(won?'🏆 ':'🔒 ')+'<b>'+a.name+'</b> — '+a.desc+'<span>'+(won?'✓':'')+'</span>';
-    al.appendChild(d);
-  }
-}
+const totalB=s=>Object.values(s.buildings).reduce((a,b)=>a+b,0);
+function fmt(n){if(S.set.full)return Math.floor(n).toLocaleString('en-US');if(n<1000)return Math.floor(n)+'';const u=['K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc'];let i=-1,v=n;while(v>=1000&&i<u.length-1){v/=1000;i++;}return(v>=100?v.toFixed(0):v>=10?v.toFixed(1):v.toFixed(2))+u[i];}
+function bCost(b,o,q){let c=0;for(let i=0;i<q;i++)c+=b.baseCost*Math.pow(1.15,o+i);return c;}
+function bMax(b,o,m){let q=0,c=0;while(q<500){const n=b.baseCost*Math.pow(1.15,o+q);if(c+n>m)break;c+=n;q++;}return{q,cost:c};}
+function bMult(id){let m=1;for(const u of UPGRADES){if(u.building===id&&S.upgrades[u.id])m*=u.mult;if(u.eff&&u.eff[id]&&S.upgrades[u.id])m*=u.eff[id];}return m;}
+function dexBonus(){return 1+DEX.filter(d=>S.totalEarned>=d.at).length*0.01;}
+function prestigeMult(){let m=1+S.stars*0.05;if(S.pUp.p_soul)m*=1.25;return m;}
+function rawCps(){let s=0;for(const b of BUILDINGS)s+=(S.buildings[b.id]||0)*b.baseCps*bMult(b.id);let g=1;if(S.upgrades.soy1)g*=1.5;if(S.upgrades.soy2)g*=2;if(S.upgrades.soy3)g*=2;if(S.upgrades.soy4)g*=1.5;if(S.upgrades.syn6)g*=1.25;if(Date.now()<inspUntil)g*=1.25;return s*g*dexBonus()*(1+Math.floor(Object.keys(S.ach).length/3)*0.02)*prestigeMult();}
+function cps(){let v=rawCps();if(Date.now()<frenzyUntil)v*=7;return v;}
+function comboMult(){const n=combo.length;const rate=S.upgrades.click6?2:1;return 1+Math.min(n*rate,200)*0.02;}
+function clickBase(){let p=1;if(S.upgrades.click1)p+=1;if(S.upgrades.click3)p+=5;if(S.upgrades.click2)p*=2;if(S.upgrades.click4)p*=2;return p;}
+function clickGain(){let g=clickBase()*comboMult();if(S.upgrades.click5)g+=rawCps()*0.15;if(Date.now()<clickFrenzyUntil)g*=777;if(Date.now()<rainUntil)g*=3;if(Math.random()<0.0001)g*=100;return g;}
+function gain(n){S.sushi+=n;S.totalEarned+=n;S.runEarned+=n;}
+function beep(f,d,type,v){if(S.muted)return;try{audioCtx=audioCtx||new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.connect(g);g.connect(audioCtx.destination);o.frequency.value=f;o.type=type||'sine';g.gain.setValueAtTime(v||0.07,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,audioCtx.currentTime+d);o.start();o.stop(audioCtx.currentTime+d);}catch(e){}}
+const pop=()=>beep(400+Math.random()*300,0.09),buyS=()=>{beep(520,0.1,'square',0.05);setTimeout(()=>beep(780,0.12,'square',0.05),80);},achS=()=>{[660,880,1320].forEach((f,i)=>setTimeout(()=>beep(f,0.15,'triangle',0.07),i*110));},goldS=()=>{[880,1100,1400,1760].forEach((f,i)=>setTimeout(()=>beep(f,0.18,'sine',0.08),i*90));};
+function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;$('toasts').appendChild(d);setTimeout(()=>d.remove(),3400);}
+/* particles */
+const fx=$('fx'),fctx=fx.getContext('2d');let parts=[];
+function sizeFx(){fx.width=innerWidth;fx.height=innerHeight;}addEventListener('resize',sizeFx);sizeFx();
+function burst(x,y,crit){if(!S.set.particles)return;const em=crit?['💥','🔥','🍣','⭐']:['🍣','🍙','✨','🍶','💫'];for(let i=0;i<(crit?26:10);i++)parts.push({x,y,vx:(Math.random()-0.5)*7,vy:-2-Math.random()*5,l:1,e:em[Math.floor(Math.random()*em.length)],s:12+Math.random()*14});}
+setInterval(()=>{fctx.clearRect(0,0,fx.width,fx.height);parts=parts.filter(p=>p.l>0);for(const p of parts){p.x+=p.vx;p.y+=p.vy;p.vy+=0.25;p.l-=0.018;fctx.globalAlpha=Math.max(p.l,0);fctx.font=p.s+'px serif';fctx.fillText(p.e,p.x,p.y);}fctx.globalAlpha=1;},33);
+/* actions */
+function doClick(ev){const now=Date.now();combo=combo.filter(t=>now-t<2000);combo.push(now);S.maxCombo=Math.max(S.maxCombo,combo.length);
+const crit=Math.random()<0.07;let g=clickGain();if(crit)g*=13;
+gain(g);S.handmade+=g;S.totalClicks++;
+const r=$('bigWrap');r.classList.remove('crit');if(crit&&S.set.shake){$('app').classList.remove('shake');void $('app').offsetWidth;$('app').classList.add('shake');r.classList.add('crit');}
+pop();if(crit)beep(200,0.25,'sawtooth',0.09);
+let cx=innerWidth/2,cy=300;if(ev&&ev.clientX){cx=ev.clientX;cy=ev.clientY;}burst(cx,cy,crit);
+const f=document.createElement('div');f.className='float'+(crit?' crit':'');f.textContent=(crit?'CRIT +':' +')+fmt(g);const wr=$('bigWrap').getBoundingClientRect();f.style.left=(wr.width/2+(Math.random()*130-65))+'px';f.style.top='70px';$('bigWrap').appendChild(f);setTimeout(()=>f.remove(),1000);
+checkAch();updateHUD();}
+function buyB(id){const b=BUILDINGS.find(x=>x.id===id),o=S.buildings[id]||0;let q,c;if(buyAmt==='max'){const r=bMax(b,o,S.sushi);q=r.q;c=r.cost;}else{q=buyAmt;c=bCost(b,o,q);}if(q<1||S.sushi<c)return;S.sushi-=c;S.buildings[id]=o+q;buyS();renderShop();updateHUD();save();}
+function buyU(id){const u=UPGRADES.find(x=>x.id===id);if(!u||S.upgrades[id]||S.sushi<u.cost)return;S.sushi-=u.cost;S.upgrades[id]=1;toast(u.icon+' '+u.name);buyS();renderShop();updateHUD();save();}
+const availU=()=>UPGRADES.filter(u=>!S.upgrades[u.id]&&u.req(S));
+/* special spawns */
+function spawn(el,cb,dur){el.style.display='block';el.style.left=(8+Math.random()*80)+'vw';el.style.top=(14+Math.random()*60)+'vh';const t=setTimeout(()=>{el.style.display='none';el.onclick=null;},dur||13000);el.onclick=()=>{clearTimeout(t);el.style.display='none';el.onclick=null;cb();};}
+function goldenLoop(){const mag=S.pUp.p_mag?0.5:1;setTimeout(()=>{if(!$('offlineModal').classList.contains('open')){const r=Math.random();if(r<0.6)spawn($('golden'),()=>{goldS();S.golden++;const roll=Math.random(),base=Math.max(rawCps(),1);if(roll<0.4){frenzyUntil=Date.now()+30000;toast('✨ FRENZY x7 30s!');}else if(roll<0.75){const b2=Math.min(S.sushi*0.15,base*900)+13;gain(b2);toast('✨ LUCKY +'+fmt(b2)+'!');}else if(roll<0.9){clickFrenzyUntil=Date.now()+15000;toast('✨ CLICK x777 15s!');}else{gain(base*60);toast('✨ RUSH! +'+fmt(base*60)+ '!');}checkAch();updateHUD();save();});else if(r<0.85)spawn($('ruby'),()=>{goldS();S.golden++;clickFrenzyUntil=Date.now()+20000;frenzyUntil=Date.now()+20000;toast('❤️ RUBY RAGE! x7 CPS + x777 click 20s!');checkAch();updateHUD();save();});else spawn($('diamond'),()=>{goldS();S.golden++;const b2=Math.max(rawCps()*300,S.sushi*0.25);gain(b2);toast('💎 DIAMOND! +'+fmt(b2)+' sushi!');checkAch();updateHUD();save();});}goldenLoop();},(75+Math.random()*105)*1000*mag);}
+function eventLoop(){setTimeout(()=>{const e=EVENTS[Math.floor(Math.random()*EVENTS.length)];try{e.f();}catch(_){}toast(e.n+' '+e.t);const f=$('eventFeed');f.innerHTML='• '+e.n+' '+e.t+'<br>'+f.innerHTML;goldS();updateHUD();eventLoop();},90000+Math.random()*90000);}
+/* achievements */
+const ACH=[{id:'c1',n:'First Bite',d:'Click 10x',c:s=>s.totalClicks>=10},{id:'c2',n:'Chopstick Pro',d:'Click 500x',c:s=>s.totalClicks>=500},{id:'c3',n:'Carpal Tunnel',d:'Click 5,000x',c:s=>s.totalClicks>=5e3},{id:'c4',n:'Click God',d:'Click 25,000x',c:s=>s.totalClicks>=25e3},{id:'e1',n:'Maki Beginner',d:'Bake 1K total',c:s=>s.totalEarned>=1e3},{id:'e2',n:'Roll Dealer',d:'Bake 1M total',c:s=>s.totalEarned>=1e6},{id:'e3',n:'Millionaire',d:'Bake 100M',c:s=>s.totalEarned>=1e8},{id:'e4',n:'Empire',d:'Bake 10B',c:s=>s.totalEarned>=1e10},{id:'e5',n:'Galactic Chef',d:'Bake 1T',c:s=>s.totalEarned>=1e12},{id:'p1',n:'Nice Spread',d:'10/s',c:()=>cps()>=10},{id:'p2',n:'Conveyor',d:'500/s',c:()=>cps()>=500},{id:'p3',n:'Volcano',d:'50K/s',c:()=>cps()>=5e4},{id:'p4',n:'Black Hole',d:'10M/s',c:()=>cps()>=1e7},{id:'b1',n:'Family',d:'Own 10 bldgs',c:s=>totalB(s)>=10},{id:'b2',n:'Franchise',d:'Own 75',c:s=>totalB(s)>=75},{id:'b3',n:'Zaibatsu',d:'Own 200',c:s=>totalB(s)>=200},{id:'b4',n:'Monopoly',d:'Own 400',c:s=>totalB(s)>=400},{id:'g1',n:'Golden Catch',d:'1 golden',c:s=>s.golden>=1},{id:'g2',n:'Shiny Hunter',d:'7 golden',c:s=>s.golden>=7},{id:'g3',n:'Bling Lord',d:'20 golden',c:s=>s.golden>=20},{id:'k1',n:'Combo x2',d:'15 combo',c:s=>s.maxCombo>=15},{id:'k2',n:'Unstoppable',d:'50 combo',c:s=>s.maxCombo>=50},{id:'cat1',n:'Cat Person',d:'Cat lvl 3',c:s=>s.catLvl>=3},{id:'cat2',n:'Cat Emperor',d:'Cat lvl 6',c:s=>s.catLvl>=6},{id:'d1',n:'Collector',d:'5 dex',c:s=>DEX.filter(d=>s.totalEarned>=d.at).length>=5},{id:'d2',n:'Curator',d:'10 dex',c:s=>DEX.filter(d=>s.totalEarned>=d.at).length>=10},{id:'r1',n:'Gambler',d:'Win roulette 3x',c:s=>s.roulette>=3},{id:'s1',n:'Ascended',d:'Prestige once',c:s=>s.ascensions>=1},{id:'s2',n:'Enlightened',d:'10 stars',c:s=>s.stars>=10},{id:'f1',n:'Skyscraper',d:'Own a Tower',c:s=>(s.buildings.tower||0)>=1},{id:'f2',n:'Pilgrim',d:'Own Fuji Shrine',c:s=>(s.buildings.fuji||0)>=1},{id:'t1',n:'Veteran',d:'Play 30 min',c:s=>s.playSec>=1800},{id:'t2',n:'Addict',d:'Play 2h',c:s=>s.playSec>=7200},{id:'x1',n:'Crit Happens',d:'Land 25 crits (luck)',c:s=>(s.crits||0)>=25},{id:'x2',n:'High Roller',d:'Hold 1B at once',c:s=>s.sushi>=1e9}];
+function checkAch(){for(const a of ACH){if(!S.ach[a.id]){try{if(a.c(S)){S.ach[a.id]=1;toast('🏆 '+a.n+' — '+a.d);achS();}}catch(e){}}}}
+/* render */
 function row(k,v){return '<div class="statrow"><span>'+k+'</span><b>'+v+'</b></div>';}
-function checkAch(){
-  for(const a of ACH){
-    if(!state.ach[a.id]){
-      try{if(a.check(state)){state.ach[a.id]=true; toast('🏆 '+a.name+' — '+a.desc);}}catch(e){}
-    }
-  }
-}
-/* ---------- SAVE ---------- */
-function save(){try{state.playSec=state.playSec||0; localStorage.setItem(SAVE_KEY,JSON.stringify(state));}catch(e){}}
-function load(){try{const s=localStorage.getItem(SAVE_KEY); if(!s)return; const p=JSON.parse(s); state=Object.assign(fresh(),p);}catch(e){}}
-/* ---------- WIRE UP ---------- */
-$('bigSushi').addEventListener('pointerdown',doClick);
-document.querySelectorAll('.buybar button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.buybar button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); buyAmt=b.dataset.amt==='max'?'max':parseInt(b.dataset.amt,10); renderShop();});
-function setTab(which){
-  $('tabB').classList.toggle('active',which==='B');
-  $('tabU').classList.toggle('active',which==='U');
-  $('tabS').classList.toggle('active',which==='S');
-  $('pageB').style.display=which==='B'?'':'none';
-  $('pageU').style.display=which==='U'?'':'none';
-  $('pageS').style.display=which==='S'?'':'none';
-}
-$('tabB').onclick=()=>setTab('B'); $('tabU').onclick=()=>setTab('U'); $('tabS').onclick=()=>{setTab('S'); renderStats();};
-$('muteBtn').onclick=()=>{state.muted=!state.muted; $('muteBtn').textContent=state.muted?'🔇':'🔊'; save();};
-$('saveBtn').onclick=()=>{save(); toast('💾 Saved!');};
-$('resetBtn').onclick=()=>{if(confirm('Throw away ALL your sushi and start over?')){localStorage.removeItem(SAVE_KEY); state=fresh(); frenzyUntil=0; clickFrenzyUntil=0; renderShop(); updateHUD(); toast('🗑 Fresh start!');}};
-$('expBtn').onclick=()=>{save(); prompt('Copy your save (Ctrl+C):',btoa(unescape(encodeURIComponent(JSON.stringify(state)))));};
-$('impBtn').onclick=()=>{const s=prompt('Paste your save:'); if(!s)return; try{state=Object.assign(fresh(),JSON.parse(decodeURIComponent(escape(atob(s))))); renderShop(); updateHUD(); save(); toast('📥 Save loaded!');}catch(e){alert('Invalid save.');}};
-window.addEventListener('beforeunload',save);
-/* news */
-let ni=0; setInterval(()=>{ni=(ni+1)%NEWS.length; let t=NEWS[ni]; if(ni===0&&totalBuildings(state)>0)t='News: local clicker owns '+totalBuildings(state)+' buildings and '+fmt(state.sushi)+' sushi. Neighbors jealous.'; $('newsText').textContent=t;},10000);
-/* main loops */
-load();
-$('muteBtn').textContent=state.muted?'🔇':'🔊';
-renderShop(); updateHUD(); checkAch();
-setInterval(()=>{ // 10 ticks/sec
-  const gain=cps()/10;
-  state.sushi+=gain; state.totalEarned+=gain; state.playSec+=0; 
-  updateHUD();
-},100);
-setInterval(()=>{state.playSec+=1; checkAch(); renderShop(); updateHUD();},1000);
-setInterval(save,15000);
-goldenLoop();
+function updateHUD(){$('sushiCount').textContent=fmt(S.sushi)+' sushi';$('perSecond').textContent='per second: '+fmt(cps());$('perClick').textContent='per click: '+fmt(clickGain())+(combo.length>3?' 🔥':'');$('stars').textContent=S.stars;
+const lvl=Math.floor(Object.keys(S.ach).length/3);$('soyLevel').textContent='🍶 Soy Lv '+lvl+' (+'+(lvl*2)+'%) • ⭐ x'+prestigeMult().toFixed(2)+' • 📖 +'+(DEX.filter(d=>S.totalEarned>=d.at).length)+'%';
+const cm=comboMult();$('comboX').textContent='x'+cm.toFixed(1);$('comboN').textContent=combo.length>1?'('+combo.length+' hits)':'';$('comboFill').style.width=Math.min(combo.length/50*100,100)+'%';
+$('statsMini').innerHTML='baked <b>'+fmt(S.totalEarned)+'</b> • clicks '+fmt(S.totalClicks)+'<br>bldgs '+totalB(S)+' • golden '+(S.golden||0)+' • crits '+(S.crits||0)+'<br>'+Math.floor(S.playSec/60)+'m '+ (S.playSec%60)+'s • ascensions '+S.ascensions;
+const bb=$('buffBar');let h='';const t=Date.now();
+if(t<frenzyUntil)h+='<div class="buff">✨ FRENZY x7 '+Math.ceil((frenzyUntil-t)/1e3)+'s</div>';
+if(t<clickFrenzyUntil)h+='<div class="buff">👆 CLICK x777 '+Math.ceil((clickFrenzyUntil-t)/1e3)+'s</div>';
+if(t<inspUntil)h+='<div class="buff blue">🧼 INSPECTED +25% '+Math.ceil((inspUntil-t)/1e3)+'s</div>';
+if(t<rainUntil)h+='<div class="buff blue">🌧️ RAIN clicks x3 '+Math.ceil((rainUntil-t)/1e3)+'s</div>';
+if(t<catBoostUntil)h+='<div class="buff">🐱 CAT x3 '+Math.ceil((catBoostUntil-t)/1e3)+'s</div>';
+bb.innerHTML=h;
+const catPow=clickGain()*3*S.catLvl*(S.pUp.p_paws?2:1)*(Date.now()<catBoostUntil?3:1);
+$('catInfo').innerHTML='Lv <b>'+S.catLvl+'</b> • auto <b>'+fmt(catPow)+'</b> / 8s<br>click 🐱 for '+fmt(catPow/2);
+$('catUp').textContent='Level up cat — 🍣 '+fmt(5000*Math.pow(10,S.catLvl-1))+' (Lv '+S.catLvl+'→'+(S.catLvl+1)+')';
+let belt='';for(const b of BUILDINGS){const o=S.buildings[b.id]||0;for(let i=0;i<Math.min(o,4);i++)belt+=b.emoji+'&nbsp;&nbsp;';}if(!belt)belt='🍣&nbsp;&nbsp;🍱&nbsp;&nbsp;🍙&nbsp;&nbsp;';
+$('beltInner').innerHTML=belt+belt;}
+function renderShop(){const bl=$('buildingList');bl.innerHTML='';
+for(const b of BUILDINGS){const o=S.buildings[b.id]||0,seen=S.totalEarned>=b.baseCost*0.25||o>0;
+let q=buyAmt==='max'?bMax(b,o,S.sushi).q:buyAmt;if(q<1)q=1;
+const cost=buyAmt==='max'?bMax(b,o,S.sushi).cost:bCost(b,o,q);const cant=S.sushi<cost;
+const d=document.createElement('div');d.className='bld'+(cant?' cant':'')+(seen?'':' locked');
+d.innerHTML='<div class="em">'+(seen?b.emoji:'❓')+'</div><div class="info"><b>'+(seen?b.name:'???')+'</b><div>'+(seen?b.desc+'<br>'+fmt(b.baseCps*bMult(b.id))+'/s each • '+fmt(o*b.baseCps*bMult(b.id))+'/s':'Bake more to discover.')+'</div><div class="cost">'+(seen?(buyAmt==='max'?'max ('+bMax(b,o,S.sushi).q+')':'x'+q)+' — 🍣 '+fmt(cost):'')+'</div></div><div class="own">'+(o||'')+'</div>';
+if(seen&&!cant)d.onclick=()=>buyB(b.id);bl.appendChild(d);}
+const ul=$('upgradeList');ul.innerHTML='';const av=availU();$('upBadge').textContent=av.length?'('+av.length+')':'';
+if(!av.length)ul.innerHTML='<p style="color:var(--dim);font-size:13px">No upgrades. Keep baking! 🍣</p>';
+for(const u of av){const cant=S.sushi<u.cost;const d=document.createElement('div');d.className='up';d.style.opacity=cant?'.6':'1';
+d.innerHTML='<div class="em">'+u.icon+'</div><b>'+u.name+'</b><small>'+u.desc+'</small><span class="cost">🍣 '+fmt(u.cost)+'</span>';if(!cant)d.onclick=()=>buyU(u.id);ul.appendChild(d);}
+const dl=$('dexList');dl.innerHTML='';for(const d of DEX){const un=S.totalEarned>=d.at;const e=document.createElement('div');e.className='dexd'+(un?'':' lock');e.innerHTML='<div class="e">'+(un?d.e:'❓')+'</div><b>'+(un?d.n:'???')+'</b><br><small>'+(un?'+1% CPS':'bake '+fmt(d.at))+'</small>';dl.appendChild(e);}
+const earn=Math.floor(Math.sqrt(S.runEarned/1e9));
+$('prestigeBox').innerHTML=row('Run earned',fmt(S.runEarned))+row('Stars on ascend',earn+' ⭐')+row('Stars owned',S.stars+' (x'+prestigeMult().toFixed(2)+' CPS)')+row('Ascensions',S.ascensions)
++'<div style="display:grid;gap:8px;margin-top:10px">'+P_UP.map(p=>'<button class="pbtn gold" '+(S.pUp[p.id]||S.stars<p.c?'disabled':'')+' data-p="'+p.id+'">'+(S.pUp[p.id]?'✅ ':'⭐'+p.c+' ')+p.n+' — '+p.d+'</button>').join('')+'</div>'
++'<button class="pbtn red" id="ascBtn" '+(earn<1?'disabled':'')+'>🌟 ASCEND for +'+earn+' stars (resets run)</button><p style="font-size:12px;color:var(--dim);margin-top:8px">Requires 1B baked this run. Keep stars, dex, achievements, cat.</p>';
+document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const p=P_UP.find(x=>x.id===b.dataset.p);if(S.pUp[p.id]||S.stars<p.c)return;S.stars-=p.c;S.pUp[p.id]=1;buyS();renderShop();updateHUD();save();});
+const ab=$('ascBtn');if(ab)ab.onclick=()=>{if(earn<1||!confirm('Ascend for +'+earn+' stars? Run resets.'))return;S.stars+=earn;S.ascensions++;S.sushi=S.pUp.p_head?10000:0;S.runEarned=0;S.buildings={};S.upgrades={};frenzyUntil=clickFrenzyUntil=0;toast('🌟 +'+earn+' wasabi stars!');renderShop();updateHUD();save();};
+$('statsPanel').innerHTML=row('Bank',fmt(S.sushi))+row('Total baked',fmt(S.totalEarned))+row('Per second',fmt(cps()))+row('Per click',fmt(clickGain()))+row('Buildings',totalB(S))+row('Upgrades',Object.keys(S.upgrades).length+'/'+UPGRADES.length)+row('Golden',S.golden||0)+row('Max combo',S.maxCombo)+row('Roulette wins',S.roulette||0)+row('Dex',DEX.filter(d=>S.totalEarned>=d.at).length+'/'+DEX.length);
+const al=$('achList');al.innerHTML='';$('achCount').textContent=Object.keys(S.ach).length+'/'+ACH.length;
+for(const a of ACH){const w=!!S.ach[a.id];const d=document.createElement('div');d.className='ach'+(w?' won':'');d.innerHTML=(w?'🏆 ':'🔒 <b>')+a.n+(w?'':'</b>')+' — '+a.d;al.appendChild(d);}}
+/* sparkline */
+function drawSpark(){const c=$('spark'),x=c.getContext('2d');c.width=c.offsetWidth||300;c.height=64;const m=Math.max(...cpsHist,1);x.clearRect(0,0,c.width,c.height);x.beginPath();cpsHist.forEach((v,i)=>{const px=i/(cpsHist.length-1)*c.width,py=c.height-6-(v/m)*(c.height-14);i?x.lineTo(px,py):x.moveTo(px,py);});x.strokeStyle='#ffcf5c';x.lineWidth=2;x.stroke();x.lineTo(c.width,c.height);x.lineTo(0,c.height);x.closePath();x.fillStyle='rgba(255,207,92,.15)';x.fill();}
+/* save */
+function save(){try{S.lastSeen=Date.now();localStorage.setItem(KEY,JSON.stringify(S));$('saveNote').textContent='autosaved ✓ '+new Date().toLocaleTimeString();}catch(e){}}
+function load(){try{const r=localStorage.getItem(KEY);if(!r)return false;S=Object.assign(fresh(),JSON.parse(r));S.set=Object.assign(fresh().set,S.set||{});return true;}catch(e){return false;}}
+/* wire */
+$('bigSushi').addEventListener('pointerdown',e=>{if(Math.random()<0.07&&e.clientX)S.crits=(S.crits||0)+0;doClick(e);});
+addEventListener('keydown',e=>{if(e.code==='Space'&&!/INPUT|BUTTON/.test(document.activeElement.tagName)){e.preventDefault();doClick(null);}});
+document.querySelectorAll('.buybar button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.buybar button').forEach(x=>x.classList.remove('active'));b.classList.add('active');buyAmt=b.dataset.amt==='max'?'max':parseInt(b.dataset.amt,10);renderShop();});
+function tab(w){[['tB','pB'],['tU','pU'],['tD','pD'],['tP','pP'],['tS','pS']].forEach(([t,p])=>{$(t).classList.toggle('active',p==='p'+w);$(p).style.display=p==='p'+w?'':'none';});}
+$('tB').onclick=()=>tab('B');$('tU').onclick=()=>tab('U');$('tD').onclick=()=>tab('D');$('tP').onclick=()=>tab('P');$('tS').onclick=()=>{tab('S');renderShop();};
+$('cat').onclick=e=>{const p=clickGain()*3*S.catLvl*(S.pUp.p_paws?2:1)/2;gain(p);burst(e.clientX,e.clientY,false);const f=document.createElement('div');f.className='float';f.textContent='+'+fmt(p);f.style.left='40px';f.style.top='0';e.target.parentElement.appendChild(f);setTimeout(()=>f.remove(),900);pop();updateHUD();};
+$('catUp').onclick=()=>{const c=5000*Math.pow(10,S.catLvl-1);if(S.sushi<c)return;S.sushi-=c;S.catLvl++;buyS();updateHUD();save();};
+document.querySelectorAll('[data-bet]').forEach(b=>b.onclick=()=>{const bet=S.sushi*parseFloat(b.dataset.bet);if(bet<10){toast('Need more sushi to bet!');return;}S.sushi-=bet;const r=Math.random();$('slot').textContent='🎲';setTimeout(()=>{if(r<0.15){const w=bet*5;gain(w);S.roulette++;$('slot').textContent='💰';$('slotMsg').textContent='JACKPOT! +'+fmt(w);goldS();}else if(r<0.55){const w=bet*2;gain(w);S.roulette++;$('slot').textContent='🎉';$('slotMsg').textContent='Win! +'+fmt(w);buyS();}else{$('slot').textContent='💸';$('slotMsg').textContent='Lost '+fmt(bet)+'...';beep(150,0.3,'sawtooth',0.06);}checkAch();updateHUD();save();},400);});
+$('themeBtn').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';document.body.classList.toggle('light',S.theme==='light');$('themeBtn').textContent=S.theme==='light'?'☀️':'🌙';save();};
+$('muteBtn').onclick=()=>{S.muted=!S.muted;$('muteBtn').textContent=S.muted?'🔇':'🔊';save();};
+$('musicBtn').onclick=()=>{S.music=!S.music;$('musicBtn').style.opacity=S.music?'1':'.4';if(S.music){const notes=[262,294,330,392,440,523];musicTimer=setInterval(()=>{if(!S.muted)beep(notes[Math.floor(Math.random()*notes.length)],0.4,'triangle',0.03);},500);}else clearInterval(musicTimer);save();};
+$('saveBtn').onclick=()=>{save();toast('💾 Saved!');};
+$('resetBtn').onclick=()=>{if(confirm('Delete EVERYTHING?')){localStorage.removeItem(KEY);S=fresh();applySet();location.reload();}};
+$('expBtn').onclick=()=>{save();prompt('Copy save:',btoa(unescape(encodeURIComponent(JSON.stringify(S)))));};
+$('impBtn').onclick=()=>{const s=prompt('Paste save:');if(!s)return;try{S=Object.assign(fresh(),JSON.parse(decodeURIComponent(escape(atob(s)))));applySet();renderShop();updateHUD();save();toast('📥 Loaded!');}catch(e){alert('Bad save.');}};
+function applySet(){$('sParticles').checked=S.set.particles;$('sShake').checked=S.set.shake;$('sFull').checked=S.set.full;$('sTicker').checked=S.set.ticker;$('ticker').style.display=S.set.ticker?'':'none';document.body.classList.toggle('light',S.theme==='light');$('themeBtn').textContent=S.theme==='light'?'☀️':'🌙';$('muteBtn').textContent=S.muted?'🔇':'🔊';}
+$('sParticles').onchange=e=>{S.set.particles=e.target.checked;save();};$('sShake').onchange=e=>{S.set.shake=e.target.checked;save();};$('sFull').onchange=e=>{S.set.full=e.target.checked;renderShop();updateHUD();save();};$('sTicker').onchange=e=>{S.set.ticker=e.target.checked;$('ticker').style.display=S.set.ticker?'':'none';save();};
+addEventListener('beforeunload',save);
+/* bg floats */
+(function(){const bf=$('bgFloat'),em=['🍣','🍱','🍙','🦐','🍶','🐟','🥢'];for(let i=0;i<18;i++){const s=document.createElement('span');s.textContent=em[i%em.length];s.style.left=Math.random()*100+'vw';s.style.fontSize=(16+Math.random()*28)+'px';s.style.animationDuration=(14+Math.random()*20)+'s';s.style.animationDelay=(-Math.random()*20)+'s';bf.appendChild(s);}})();
+/* boot */
+const had=load();applySet();
+if(had){const away=Math.min((Date.now()-(S.lastSeen||Date.now()))/1000,8*3600);if(away>60){const g=cps()*away*0.5;gain(g);$('offlineText').textContent='You were gone '+Math.floor(away/60)+'m. Your chefs baked +'+fmt(g)+' sushi (50% efficiency)!';$('offlineModal').classList.add('open');}}
+if(S.pUp.p_head&&S.sushi===0&&S.ascensions>0)S.sushi=10000;
+renderShop();updateHUD();checkAch();drawSpark();
+let ni=0;setInterval(()=>{if(!S.set.ticker)return;ni=(ni+1)%NEWS.length;$('newsText').textContent=NEWS[ni];},9000);
+setInterval(()=>{const g=cps()/20;S.sushi+=g;S.totalEarned+=g;S.runEarned+=g;combo=combo.filter(t=>Date.now()-t<2000);updateHUD();},50);
+setInterval(()=>{S.playSec++;cpsHist.push(cps());cpsHist.shift();drawSpark();checkAch();renderShop();updateHUD();
+if(S.catLvl>0&&rawCps()>0){/* cat passive */}},1000);
+setInterval(()=>{if(rawCps()>0){const p=clickGain()*3*S.catLvl*(S.pUp.p_paws?2:1)*(Date.now()<catBoostUntil?3:1);gain(p);}},8000);
+setInterval(save,15000);goldenLoop();eventLoop();
 </script>
 </body>
 </html>
