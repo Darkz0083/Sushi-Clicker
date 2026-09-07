@@ -3,142 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SUSHI CLICKER — Darkz</title>
+<title>SUSHI CLICKER X — Darkz</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{background:#0b0b0f;color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden;height:100vh;user-select:none;-webkit-user-select:none}
-#news{height:36px;background:#14141c;border-bottom:1px solid #2a2a35;display:flex;align-items:center;overflow:hidden;white-space:nowrap;font-size:13px;color:#bbb}
-#newsInner{display:inline-block;padding-left:100%;animation:tick 25s linear infinite}
+body{background:#07070c;color:#fff;font-family:Inter,Arial,sans-serif;overflow:hidden;height:100vh;user-select:none;-webkit-user-select:none}
+#news{height:34px;background:#13131b;border-bottom:1px solid #2a2a35;display:flex;align-items:center;overflow:hidden;white-space:nowrap;font-size:13px;color:#bbb}
+#newsInner{display:inline-block;padding-left:100%;animation:tick 28s linear infinite}
 @keyframes tick{to{transform:translateX(-100%)}}
-#layout{display:grid;grid-template-columns:420px 1fr;height:calc(100vh - 36px)}
-#left{background:radial-gradient(ellipse at 50% 0%,#1c1c28,#0b0b0f 70%);border-right:1px solid #2a2a35;display:flex;flex-direction:column;align-items:center;padding:18px;overflow-y:auto;position:relative}
-#count{font-size:42px;font-weight:900;letter-spacing:-1px}
-#per{color:#9aa0aa;font-size:13px;margin:4px 0 12px}
-#bigWrap{position:relative;margin:10px 0}
-#bigSushi{font-size:170px;cursor:pointer;line-height:1;filter:drop-shadow(0 20px 60px rgba(255,60,60,.4));transition:transform .08s ease;display:block}
-#bigSushi:active{transform:scale(.93)}
-#bigSushi.wobble{animation:wob .25s ease}
-@keyframes wob{0%{transform:scale(1) rotate(0)}30%{transform:scale(.92) rotate(-4deg)}60%{transform:scale(1.05) rotate(3deg)}100%{transform:scale(1) rotate(0)}}
-#plate{width:260px;height:26px;background:radial-gradient(ellipse,#2e2e3c,#14141c);border-radius:50%;margin-top:-18px;border:1px solid #333}
-#soy{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(180deg,rgba(255,60,60,.15),rgba(0,0,0,.4));pointer-events:none;transition:height 1s}
-.float{position:fixed;pointer-events:none;font-weight:900;font-size:22px;color:#fff;text-shadow:0 2px 10px #000;animation:floatUp 1s ease-out forwards;z-index:999}
-@keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-110px)}}
-.mini{position:fixed;pointer-events:none;font-size:18px;animation:fallP 1s ease-in forwards;z-index:998}
-@keyframes fallP{to{transform:translateY(220px) rotate(200deg);opacity:0}}
-#golden{position:fixed;width:90px;height:90px;font-size:64px;display:none;cursor:pointer;z-index:1000;filter:drop-shadow(0 0 25px gold);animation:goldW 1s ease-in-out infinite alternate}
-@keyframes goldW{from{transform:scale(1) rotate(-8deg)}to{transform:scale(1.15) rotate(8deg)}}
-#right{background:#101016;display:flex;flex-direction:column;overflow:hidden}
-#tabs{display:flex;gap:8px;padding:12px;border-bottom:1px solid #222}
-.tab{border:1px solid #333;background:#1a1a24;color:#bbb;border-radius:999px;padding:8px 18px;cursor:pointer;font-size:13px}
+#layout{display:grid;grid-template-columns:400px 1fr 380px;height:calc(100vh - 34px)}
+#left{background:radial-gradient(ellipse at 50% 0%,#1e1e2e,#07070c 70%);border-right:1px solid #222;display:flex;flex-direction:column;align-items:center;padding:14px;overflow-y:auto;position:relative}
+#count{font-size:40px;font-weight:900;letter-spacing:-1px}
+#per{color:#9aa0aa;font-size:12px;margin:4px 0 8px;text-align:center}
+#bigWrap{position:relative;margin:8px 0}
+#bigSushi{font-size:165px;cursor:pointer;line-height:1;filter:drop-shadow(0 20px 60px rgba(255,60,60,.45));transition:transform .08s;display:block}
+#bigSushi:active{transform:scale(.92)}
+#bigSushi.wobble{animation:wob .22s ease}
+@keyframes wob{0%{transform:scale(1)}30%{transform:scale(.9) rotate(-5deg)}60%{transform:scale(1.06) rotate(4deg)}100%{transform:scale(1)}}
+#left.shake{animation:shk .3s}
+@keyframes shk{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+#plate{width:250px;height:24px;background:radial-gradient(ellipse,#33333f,#14141b);border-radius:50%;margin-top:-16px;border:1px solid #333}
+#comboBar{width:90%;height:10px;background:#222;border-radius:999px;overflow:hidden;margin-top:10px}
+#comboFill{height:100%;width:0%;background:linear-gradient(90deg,#ff0,#f00)}
+#mid{background:#0e0e14;display:flex;flex-direction:column;overflow:hidden;border-right:1px solid #222}
+#tabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid #222;flex-wrap:wrap}
+.tab{border:1px solid #333;background:#1a1a24;color:#bbb;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:12px}
 .tab.on{background:#fff;color:#000;font-weight:800}
-#store{flex:1;overflow-y:auto;padding:12px}
-.item{display:flex;gap:12px;align-items:center;background:#1a1a24;border:1px solid #2a2a35;border-radius:18px;padding:12px;margin:8px 0;cursor:pointer;transition:transform .15s,opacity .2s}
+#storeMid{flex:1;overflow-y:auto;padding:10px}
+#right{background:#101016;display:flex;flex-direction:column;overflow:hidden}
+#store{flex:1;overflow-y:auto;padding:10px}
+.item{display:flex;gap:10px;align-items:center;background:#1a1a24;border:1px solid #2a2a35;border-radius:16px;padding:10px;margin:7px 0;cursor:pointer;transition:transform .12s}
 .item:hover{transform:translateX(4px)}
-.item.locked{opacity:.4;filter:grayscale(1)}
+.item.locked{opacity:.35;filter:grayscale(1)}
 .item.cant{opacity:.6}
-.item .ic{font-size:38px;min-width:52px;text-align:center}
-.item b{font-size:15px;display:block}
-.item small{color:#888;font-size:12px}
-.item .pr{margin-left:auto;text-align:right;font-weight:800;color:#7CFF7C}
+.item .ic{font-size:34px;min-width:48px;text-align:center}
+.item b{font-size:14px;display:block}
+.item small{color:#888;font-size:11px}
+.item .pr{margin-left:auto;text-align:right;font-weight:800;color:#7CFF7C;font-size:13px}
 .item .pr.no{color:#ff7b7b}
-.item .own{font-size:42px;font-weight:900;color:#222;opacity:.9;margin-left:8px;-webkit-text-stroke:1px #444}
-.upGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px}
-.up{aspect-ratio:1;background:#1e1e28;border:2px solid #333;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:32px;cursor:pointer;position:relative}
+.item .own{font-size:36px;font-weight:900;color:#222;-webkit-text-stroke:1px #444;margin-left:6px}
+.upGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:8px}
+.up{aspect-ratio:1;background:#1e1e28;border:2px solid #333;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:30px;cursor:pointer;position:relative}
 .up:hover{border-color:#fff;transform:scale(1.05)}
 .up.locked{opacity:.25;filter:grayscale(1)}
-.up .tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#000;border:1px solid #444;padding:8px;border-radius:10px;font-size:11px;width:180px;display:none;z-index:50}
+.up .tip{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);background:#000;border:1px solid #444;padding:8px;border-radius:10px;font-size:11px;width:190px;display:none;z-index:50}
 .up:hover .tip{display:block}
-#toastBox{position:fixed;bottom:18px;left:18px;z-index:2000;display:flex;flex-direction:column;gap:8px}
-.toast{background:#fff;color:#000;border-radius:14px;padding:10px 16px;font-weight:800;animation:tin .3s ease}
+.float{position:fixed;pointer-events:none;font-weight:900;font-size:22px;text-shadow:0 2px 10px #000;animation:floatUp 1s ease-out forwards;z-index:999}
+.float.crit{color:gold;font-size:34px}
+@keyframes floatUp{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-120px)}}
+.mini{position:fixed;pointer-events:none;font-size:18px;animation:fallP 1s ease-in forwards;z-index:998}
+@keyframes fallP{to{transform:translateY(230px) rotate(200deg);opacity:0}}
+#golden{position:fixed;width:90px;height:90px;font-size:62px;display:none;cursor:pointer;z-index:1000;filter:drop-shadow(0 0 25px gold);animation:goldW 1s ease-in-out infinite alternate}
+#wrath{position:fixed;width:90px;height:90px;font-size:62px;display:none;cursor:pointer;z-index:1000;filter:drop-shadow(0 0 25px red);animation:goldW 1s ease-in-out infinite alternate}
+@keyframes goldW{from{transform:scale(1) rotate(-8deg)}to{transform:scale(1.15) rotate(8deg)}}
+.stormDrop{position:fixed;top:-50px;font-size:28px;cursor:pointer;z-index:999;animation:stormF linear forwards}
+@keyframes stormF{to{transform:translateY(110vh) rotate(360deg)}}
+#toastBox{position:fixed;bottom:16px;left:16px;z-index:2000;display:flex;flex-direction:column;gap:8px;max-width:340px}
+.toast{background:#fff;color:#000;border-radius:12px;padding:9px 14px;font-weight:800;font-size:13px;animation:tin .3s ease}
 @keyframes tin{from{transform:translateX(-40px);opacity:0}to{transform:none;opacity:1}}
-#frenzyBar{position:fixed;top:46px;left:50%;transform:translateX(-50%);background:gold;color:#000;font-weight:900;padding:6px 18px;border-radius:999px;display:none;z-index:1500}
+#frenzyBar{position:fixed;top:44px;left:50%;transform:translateX(-50%);background:gold;color:#000;font-weight:900;padding:6px 18px;border-radius:999px;display:none;z-index:1500;font-size:13px}
+#modalOff{position:fixed;inset:0;background:rgba(0,0,0,.7);display:none;align-items:center;justify-content:center;z-index:3000}
+#modalCard{background:#15151d;border:1px solid #333;border-radius:22px;padding:26px;width:min(440px,92vw);text-align:center}
+.btn{border:none;border-radius:999px;padding:12px 22px;font-weight:800;cursor:pointer;font-size:14px}
+.btnW{background:#fff;color:#000}.btnG{background:#222;color:#fff;border:1px solid #444;margin-left:8px}
+.stock{display:flex;align-items:center;gap:10px;background:#1a1a24;border:1px solid #2a2a35;border-radius:14px;padding:10px;margin:7px 0}
 button{font-family:inherit}
-@media(max-width:900px){#layout{grid-template-columns:1fr}#left{min-height:52vh}}
+@media(max-width:1100px){#layout{grid-template-columns:1fr;overflow-y:auto}#left,#mid,#right{min-height:60vh}}
 </style>
 </head>
 <body>
-<div id="news"><div id="newsInner">🍣 Welcome to SUSHI CLICKER • click sushi • golden sushi = frenzy •</div></div>
-<div id="frenzyBar">⚡ FRENZY x7</div>
-<div id="golden" onclick="clickGolden()">🍣</div>
+<div id="news"><div id="newsInner">🍣 SUSHI CLICKER X • prestige • market • storm •</div></div>
+<div id="frenzyBar"></div>
+<div id="golden" onclick="clickGolden()">🌟</div>
+<div id="wrath" onclick="clickWrath()">😡</div>
 <div id="layout">
 <div id="left">
 <div id="count">0 sushi</div>
-<div id="per">per second: 0 • per click: 1</div>
+<div id="per">0/s</div>
 <div id="bigWrap"><div id="bigSushi" onclick="clickSushi(event)">🍣</div><div id="plate"></div></div>
-<div style="color:#666;font-size:12px">click the sushi • every click pops particles ✨</div>
-<div id="miniStats" style="margin-top:12px;color:#888;font-size:12px"></div>
-<div id="soy"></div>
+<div style="display:flex;gap:6px;flex-wrap:wrap;justify-content:center" id="skins"></div>
+<div id="comboBar"><div id="comboFill"></div></div>
+<div id="comboTxt" style="font-size:11px;color:#888">combo x1.0 • crit 3%</div>
+<div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;justify-content:center">
+<button class="btn btnW" onclick="rebirth()">🌌 Rebirth</button>
+<button class="btn btnG" onclick="claimDaily()">🎁 Daily</button>
+<button class="btn btnG" onclick="startStorm(true)">🌧️ Storm</button>
 </div>
-<div id="right">
-<div id="tabs"><div class="tab on" id="t-store" onclick="switchTab('store')">🏪 Store</div><div class="tab" id="t-up" onclick="switchTab('up')">⬆️ Upgrades <span id="upDot"></span></div><div class="tab" id="t-stats" onclick="switchTab('stats')">📊 Stats</div><div class="tab" onclick="saveGame(true)">💾 Save</div><div class="tab" onclick="resetGame()">🗑️ Reset</div></div>
-<div id="store"></div>
+<div id="miniStats" style="margin-top:10px;color:#888;font-size:11px;text-align:center"></div>
 </div>
+<div id="mid">
+<div id="tabs">
+<div class="tab on" id="t-up" onclick="switchTab('up')">⬆️ Up <span id="upDot"></span></div>
+<div class="tab" id="t-ach" onclick="switchTab('ach')">🏆 Ach</div>
+<div class="tab" id="t-market" onclick="switchTab('market')">📈 Market</div>
+<div class="tab" id="t-lump" onclick="switchTab('lump')">🟢 Lumps</div>
+<div class="tab" id="t-stats" onclick="switchTab('stats')">📊 Stats</div>
+<div class="tab" id="t-set" onclick="switchTab('set')">⚙️ Set</div>
+</div>
+<div id="storeMid"></div>
+</div>
+<div id="right"><div style="padding:10px;color:#888;font-size:12px">🏪 STORE • 25 buildings • 1.15 scaling</div><div id="store"></div></div>
 </div>
 <div id="toastBox"></div>
+<div id="modalOff"><div id="modalCard"><h2 id="offTitle">Welcome back!</h2><p id="offDesc" style="color:#aaa;margin:10px 0"></p><button class="btn btnW" onclick="closeOffline()">Claim 🍣</button></div></div>
 <script>
 const $=id=>document.getElementById(id);
-let S=null;
+let S=null,curTab='up';
 const BUILDINGS=[
-{id:'chop',n:'Chopsticks',i:'🥢',b:15,c:0.1,d:'Auto-clicks sushi'},
-{id:'chef',n:'Sushi Chef',i:'👨‍🍳',b:100,c:1,d:'Grandma of sushi'},
-{id:'farm',n:'Rice Paddy',i:'🌾',b:1100,c:8,d:'Grows rice'},
-{id:'mine',n:'Tuna Trench',i:'🎣',b:12000,c:47,d:'Deep sea tuna'},
-{id:'fact',n:'Sushi Factory',i:'🏭',b:130000,c:260,d:'Mass maki'},
-{id:'bank',n:'Wasabi Bank',i:'🏦',b:1400000,c:1400,d:'Interest in wasabi'},
-{id:'templ',n:'Wasabi Temple',i:'⛩️',b:20000000,c:7800,d:'Ancient flavor'},
-{id:'tower',n:'Sake Tower',i:'🗼',b:330000000,c:44000,d:'Wizard sake'},
-{id:'ship',n:'Delivery Boat',i:'🚢',b:5100000000,c:260000,d:'Fresh import'},
-{id:'lab',n:'Soy Lab',i:'🧪',b:75000000000,c:1600000,d:'Alchemy soy'},
-{id:'port',n:'Tokyo Portal',i:'🌀',b:1000000000000,c:10000000,d:'Portal sushi'},
-{id:'time',n:'Time Freezer',i:'⏳',b:14000000000000,c:65000000,d:'Sushi from past'},
-{id:'anti',n:'Wasabi Reactor',i:'⚛️',b:170000000000000,c:430000000,d:'Antimatter roll'},
-{id:'prism',n:'Prism Platter',i:'💎',b:2100000000000000,c:2900000000,d:'Light sushi'},
-{id:'luck',n:'Lucky Cat',i:'🐈',b:26000000000000000,c:21000000000,d:'Chance maker'},
-{id:'frac',n:'Fractal Roll',i:'🧬',b:310000000000000000,c:150000000000,d:'Infinite roll'},
-{id:'js',n:'JS Console',i:'💻',b:71000000000000000000,c:1100000000000,d:'Hack sushi'},
-{id:'idle',n:'Idleverse',i:'🌌',b:1.2e22,c:8300000000000,d:'Universe farm'},
-{id:'cortex',n:'Cortex Chef',i:'🧠',b:1.9e24,c:64000000000000,d:'Brain sushi'},
-{id:'you',n:'You',i:'🫵',b:5.4e26,c:510000000000000,d:'You make sushi'},
-];
+{id:'chop',n:'Chopsticks',i:'🥢',b:15,c:.1},{id:'chef',n:'Sushi Chef',i:'👨‍🍳',b:100,c:1},
+{id:'farm',n:'Rice Paddy',i:'🌾',b:1100,c:8},{id:'mine',n:'Tuna Trench',i:'🎣',b:12000,c:47},
+{id:'fact',n:'Sushi Factory',i:'🏭',b:130000,c:260},{id:'bank',n:'Wasabi Bank',i:'🏦',b:1400000,c:1400},
+{id:'templ',n:'Wasabi Temple',i:'⛩️',b:20000000,c:7800},{id:'tower',n:'Sake Tower',i:'🗼',b:330000000,c:44000},
+{id:'ship',n:'Delivery Boat',i:'🚢',b:5100000000,c:260000},{id:'lab',n:'Soy Lab',i:'🧪',b:75000000000,c:1600000},
+{id:'port',n:'Tokyo Portal',i:'🌀',b:1e12,c:1e7},{id:'time',n:'Time Freezer',i:'⏳',b:1.4e13,c:6.5e7},
+{id:'anti',n:'Wasabi Reactor',i:'⚛️',b:1.7e14,c:4.3e8},{id:'prism',n:'Prism Platter',i:'💎',b:2.1e15,c:2.9e9},
+{id:'luck',n:'Lucky Cat',i:'🐈',b:2.6e16,c:2.1e10},{id:'frac',n:'Fractal Roll',i:'🧬',b:3.1e17,c:1.5e11},
+{id:'js',n:'JS Console',i:'💻',b:7.1e19,c:1.1e12},{id:'idle',n:'Idleverse',i:'🌌',b:1.2e22,c:8.3e12},
+{id:'cortex',n:'Cortex Chef',i:'🧠',b:1.9e24,c:6.4e13},{id:'you',n:'You',i:'🫵',b:5.4e26,c:5.1e14},
+{id:'ai',n:'Sushi AI',i:'🤖',b:8e28,c:4e15},{id:'quant',n:'Quantum Roll',i:'⚛️🍣',b:1e31,c:3e16},
+{id:'hole',n:'Black Hole Sashimi',i:'🕳️',b:1e33,c:2e17},{id:'darkz',n:'Darkz Clone',i:'🌙',b:1e35,c:1.5e18},
+{id:'ton',n:'TON 618 Platter',i:'🌌🍣',b:1e37,c:1e19}];
+const BIGS=[{e:'🍣',need:0},{e:'🍱',need:1e5},{e:'🍤',need:1e7},{e:'🍙',need:1e9},{e:'🦐',need:1e11},{e:'🐟',need:1e13},{e:'👑🍣',need:1e15}];
 const CLICK_UPS=[
-{id:'cl1',n:'Sharper Chopsticks',i:'🥢',c:100,need:50,d:'Click +1',f:()=>{S.flat+=1}},
-{id:'cl2',n:'Double Grip',i:'✌️',c:5000,need:5000,d:'Click x2',f:()=>{S.clickMult*=2}},
-{id:'cl3',n:'Golden Fingers',i:'👆',c:500000,need:100000,d:'Click +5% of CpS',f:()=>{S.clickPct+=0.05}},
-{id:'cl4',n:'Darkz Touch',i:'🌙',c:50000000,need:5000000,d:'Click x2',f:()=>{S.clickMult*=2}},
-{id:'cl5',n:'Void Click',i:'🕳️',c:5000000000,need:500000000,d:'Click x2 +5% CpS',f:()=>{S.clickMult*=2;S.clickPct+=0.05}},
-];
-const TIERS=[1,10,25,50,100,200];
-function def(){return {sushi:0,total:0,clicks:0,b:{},m:{},up:[],flat:0,clickMult:1,clickPct:0.05,frenzy:1,frenzyT:0,cfrenzyT:0,gold:0,start:Date.now(),muted:false}}
-function fmt(n){if(n<1000)return Math.floor(n)+'';const u=['K','M','B','T','Qa','Qi','Sx','Sp','Oc'];let v=n;for(let i=0;i<u.length;i++){v/=1000;if(v<1000)return v.toFixed(2)+u[i]}return v.toFixed(2)+'Dc'}
+{id:'cl1',n:'Sharper Sticks',i:'🥢',c:100,need:50,f:()=>{S.flat+=1}},
+{id:'cl2',n:'Double Grip',i:'✌️',c:5000,need:5000,f:()=>{S.clickMult*=2}},
+{id:'cl3',n:'Golden Fingers',i:'👆',c:500000,need:1e5,f:()=>{S.clickPct+=.05}},
+{id:'cl4',n:'Darkz Touch',i:'🌙',c:5e7,need:5e6,f:()=>{S.clickMult*=2}},
+{id:'cl5',n:'Void Click',i:'🕳️',c:5e9,need:5e8,f:()=>{S.clickMult*=2;S.clickPct+=.05}},
+{id:'cl6',n:'Crit School',i:'🎯',c:5e11,need:5e10,f:()=>{S.critC+=.02}}];
+const PRESTIGE_UPS=[
+{id:'p1',n:'Divine Rice',i:'🌾✨',c:1,f:()=>{S.prestigeCps+=.1}},
+{id:'p2',n:'Golden Soul',i:'🌟',c:5,f:()=>{S.prestigeCps+=.25;S.critC+=.01}},
+{id:'p3',n:'Storm Caller',i:'🌧️',c:10,f:()=>{S.stormFreq*=.7}},
+{id:'p4',n:'Lump Master',i:'🟢',c:20,f:()=>{S.lumpRate*=.6}}];
+const TIERS=[1,10,25,50,100,150,200];
+const STOCKS=[{sym:'TUNA',n:'Tuna',p:52},{sym:'SALM',n:'Salmon',p:31},{sym:'WASA',n:'Wasabi',p:88},{sym:'RICE',n:'Rice',p:12},{sym:'NORI',n:'Nori',p:44}];
+function def(){return {sushi:0,total:0,totalAll:0,clicks:0,hand:0,b:{},m:{},lb:{},up:[],pup:[],flat:0,clickMult:1,clickPct:.05,critC:.03,frenzy:1,frenzyT:0,cfrenzyT:0,bfrenzy:null,gold:0,wrath:0,combo:0,comboT:0,bestCombo:0,crits:0,heavenly:0,prestiges:0,prestigeCps:0,lumps:0,lumpT:60,lumpRate:60,stormFreq:1,market:{TUNA:52,SALM:31,WASA:88,RICE:12,NORI:44},stocks:{},ach:{},start:Date.now(),lastSeen:Date.now(),daily:'',skin:'🍣',muted:false,particles:true}}
+function fmt(n){if(!isFinite(n))return '0';if(n<1000)return Math.floor(n)+'';const u=['K','M','B','T','Qa','Qi','Sx','Sp','Oc','No','Dc'];let v=n;for(let i=0;i<u.length;i++){v/=1000;if(v<1000)return v.toFixed(2)+u[i]}return v.toFixed(2)+'Dc'}
 function cost(b){return Math.ceil(b.b*Math.pow(1.15,S.b[b.id]||0))}
-function calcCpsRaw(){let s=0;BUILDINGS.forEach(b=>{s+=(S.b[b.id]||0)*b.c*(S.m[b.id]||1)});return s}
-function calcCps(){return calcCpsRaw()*S.frenzy}
-function calcClick(){let base=1+S.flat+calcCpsRaw()*S.clickPct;if(S.cfrenzyT>0)base*=777;return base*S.clickMult}
-function clickSushi(e){if(!S)return;const v=calcClick();S.sushi+=v;S.total+=v;S.clicks++;const el=$('bigSushi');el.classList.remove('wobble');void el.offsetWidth;el.classList.add('wobble');spawnFloat(e.clientX,e.clientY,'+'+fmt(v));for(let i=0;i<5;i++)spawnMini(e.clientX,e.clientY);pop(600+S.clicks%400);update()}
-function spawnFloat(x,y,t){const d=document.createElement('div');d.className='float';d.textContent=t;d.style.left=(x-10+Math.random()*20)+'px';d.style.top=(y-20)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
-function spawnMini(x,y){const d=document.createElement('div');d.className='mini';d.textContent=['🍣','🍱','🍤','🥢'][Math.floor(Math.random()*4)];d.style.left=x+'px';d.style.top=y+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
-function pop(f){if(S.muted)return;try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.08,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.12);o.start();o.stop(a.currentTime+.12)}catch{}}
-function buyBuilding(id){const b=BUILDINGS.find(x=>x.id===id);const c=cost(b);if(S.sushi<c)return;S.sushi-=c;S.b[id]=(S.b[id]||0)+1;pop(300);update();saveGame()}
-function buyUpgrade(id){const u=findUpgrade(id);if(!u||S.sushi<u.c||S.up.includes(id))return;S.sushi-=u.c;S.up.push(id);u.f();toast('⬆️ '+u.n);pop(900);update();saveGame()}
-function findUpgrade(id){if(id.startsWith('cl'))return CLICK_UPS.find(x=>x.id===id);const [bid,t]=id.split('-t');const b=BUILDINGS.find(x=>x.id===bid);const tier=Number(t);return {id,n:b.n+' x2 '+tier,i:b.i,c:Math.ceil(b.b*8*tier),d:b.n+' x2',f:()=>{S.m[bid]=(S.m[bid]||1)*2}}}
-function availUpgrades(){let list=[];CLICK_UPS.forEach(u=>{if(!S.up.includes(u.id)&&S.total>=u.need)list.push(u)});BUILDINGS.forEach(b=>{TIERS.forEach(t=>{const id=b.id+'-t'+t;if(!S.up.includes(id)&&(S.b[b.id]||0)>=t)list.push(findUpgrade(id))})});return list}
-function switchTab(t){['store','up','stats'].forEach(k=>$('t-'+k)?.classList?.remove('on'));if($('t-'+t))$('t-'+t).classList.add('on');curTab=t;render()}
-let curTab='store';
-function render(){if(curTab==='store')renderStore();else if(curTab==='up')renderUp();else renderStats()}
-function renderStore(){let h='';BUILDINGS.forEach(b=>{const o=S.b[b.id]||0;const c=cost(b);const un=S.total>=b.b*0.3||o>0;if(!un){h+=`<div class="item locked"><div class="ic">❓</div><div><b>???</b><small>Make ${fmt(b.b*0.3)} sushi to unlock</small></div></div>`;return}const cant=S.sushi<c;h+=`<div class="item ${cant?'cant':''}" onclick="buyBuilding('${b.id}')"><div class="ic">${b.i}</div><div><b>${b.n}</b><small>${b.d} • ${fmt(b.c)}/s each</small></div><div class="pr ${cant?'no':''}">${fmt(c)} 🍣</div><div class="own">${o}</div></div>`});$('store').innerHTML=h;$('upDot').textContent=availUpgrades().length?'('+availUpgrades().length+')':''}
-function renderUp(){const a=availUpgrades();const owned=S.up.length;let h=`<p style="color:#888;font-size:13px;margin:6px 0">${owned} unlocked • ${a.length} available</p><div class="upGrid">`;if(!a.length)h+='<p style="color:#666">No upgrades — buy more buildings / make more sushi 🍣</p>';a.forEach(u=>{const cant=S.sushi<u.c;h+=`<div class="up ${cant?'locked':''}" onclick="buyUpgrade('${u.id}')">${u.i}<div class="tip"><b>${u.n}</b><br>${u.d}<br><b>${fmt(u.c)} 🍣</b></div></div>`});h+='</div>';$('store').innerHTML=h}
-function renderStats(){const cps=calcCps();$('store').innerHTML=`<div class="item"><div><b>🍣 Sushi now</b><small>total made: ${fmt(S.total)}</small></div></div><div class="item"><div><b>⚡ CpS</b><small>raw: ${fmt(calcCpsRaw())} • frenzy x${S.frenzy}</small></div><div class="pr">${fmt(cps)}/s</div></div><div class="item"><div><b>👆 Per click</b><small>${S.clicks} clicks</small></div><div class="pr">${fmt(calcClick())}</div></div><div class="item"><div><b>🏭 Buildings</b><small>${Object.values(S.b).reduce((a,b)=>a+b,0)} owned • ${S.gold} golden clicked</small></div></div><div class="item"><div><b>⏱️ Playtime</b><small>${Math.floor((Date.now()-S.start)/60000)} min</small></div></div><div class="item" onclick="S.muted=!S.muted;saveGame();renderStats()"><div><b>🔊 Sound ${S.muted?'OFF':'ON'}</b><small>tap to toggle</small></div></div>`}
+function prestigeMult(){return (1+S.heavenly*.05)*(1+S.prestigeCps)}
+function calcRaw(){let s=0;BUILDINGS.forEach(b=>{s+=(S.b[b.id]||0)*b.c*(S.m[b.id]||1)*(1+((S.lb[b.id]||0)*.1))});return s*prestigeMult()}
+function calcCps(){let m=S.frenzy;if(S.bfrenzy&&S.bfrenzy.t>0)m*=2;return calcRaw()*m}
+function comboMult(){return Math.min(5,1+S.combo*.02)}
+function calcClick(){let base=1+S.flat+calcRaw()*S.clickPct;if(S.cfrenzyT>0)base*=777;return base*S.clickMult*comboMult()}
+function clickSushi(e){if(!S)return;const x=e.clientX||innerWidth/2,y=e.clientY||300;S.combo++;S.comboT=1.2;S.bestCombo=Math.max(S.bestCombo,S.combo);let v=calcClick();let crit=Math.random()<S.critC;if(crit){v*=10;S.crits++;$('left').classList.remove('shake');void $('left').offsetWidth;$('left').classList.add('shake')}S.sushi+=v;S.total+=v;S.totalAll+=v;S.hand+=v;S.clicks++;const el=$('bigSushi');el.classList.remove('wobble');void el.offsetWidth;el.classList.add('wobble');spawnFloat(x,y,'+'+fmt(v),crit);if(S.particles)for(let i=0;i<(crit?12:5);i++)spawnMini(x,y);pop(500+S.combo%500+(crit?400:0));update()}
+function spawnFloat(x,y,t,crit){const d=document.createElement('div');d.className='float'+(crit?' crit':'');d.textContent=t+(crit?' CRIT!':'');d.style.left=(x-20+Math.random()*30)+'px';d.style.top=(y-30)+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function spawnMini(x,y){const d=document.createElement('div');d.className='mini';d.textContent=['🍣','🍱','🍤','🥢','⭐'][Math.floor(Math.random()*5)];d.style.left=x+'px';d.style.top=y+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1000)}
+function pop(f){if(S.muted)return;try{const a=new (window.AudioContext||window.webkitAudioContext)();const o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(.07,a.currentTime);g.gain.exponentialRampToValueAtTime(.001,a.currentTime+.12);o.start();o.stop(a.currentTime+.12)}catch{}}
+function buyBuilding(id){const b=BUILDINGS.find(x=>x.id===id);const c=cost(b);if(S.sushi<c)return;S.sushi-=c;S.b[id]=(S.b[id]||0)+1;pop(300);update();render();saveGame()}
+function findUp(id){if(id.startsWith('cl'))return CLICK_UPS.find(x=>x.id===id);if(id.startsWith('p'))return PRESTIGE_UPS.find(x=>x.id===id);if(id.includes('-syn')){const [a,bb]=id.split('-syn');const A=BUILDINGS.find(x=>x.id===a);return {id,n:A.n+' Synergy',i:'🔗',c:1e6,d:'Synergy boost',f:()=>{S.m[bb]=(S.m[bb]||1)*1.1}}}const [bid,t]=id.split('-t');const b=BUILDINGS.find(x=>x.id===bid);return {id,n:b.n+' x2',i:b.i,c:Math.ceil(b.b*8*Number(t)),f:()=>{S.m[bid]=(S.m[bid]||1)*2}}}
+function availUps(){let l=[];CLICK_UPS.forEach(u=>{if(!S.up.includes(u.id)&&S.total>=u.need)l.push(u)});BUILDINGS.forEach(b=>{TIERS.forEach(t=>{const id=b.id+'-t'+t;if(!S.up.includes(id)&&(S.b[b.id]||0)>=t)l.push(findUp(id))})});if((S.b.chef||0)>=15&&(S.b.farm||0)>=15&&!S.up.includes('chef-syn'))l.push({id:'chef-syn',n:'Chefs + Farms Syn',i:'🔗',c:1e7,d:'Farm x1.1',f:()=>{S.m.farm=(S.m.farm||1)*1.1}});return l}
+function buyUp(id){const u=findUp(id);if(!u||S.up.includes(id)||S.sushi<u.c)return;S.sushi-=u.c;S.up.push(id);u.f();toast('⬆️ '+u.n);pop(900);render();saveGame()}
+function buyPUp(id){const u=PRESTIGE_UPS.find(x=>x.id===id);if(S.heavenly<u.c||S.pup.includes(id))return;S.heavenly-=u.c;S.pup.push(id);u.f();toast('🌌 '+u.n);render()}
+function switchTab(t){curTab=t;['up','ach','market','lump','stats','set'].forEach(k=>$('t-'+k).classList.remove('on'));$('t-'+t).classList.add('on');render()}
+function render(){renderStore();if(curTab==='up')renderUp();else if(curTab==='ach')renderAch();else if(curTab==='market')renderMarket();else if(curTab==='lump')renderLump();else if(curTab==='stats')renderStats();else renderSet();renderSkins()}
+function renderSkins(){$('skins').innerHTML=BIGS.map(s=>{const un=S.totalAll>=s.need;return `<button class="tab ${S.skin===s.e?'on':''}" ${un?'':"disabled style='opacity:.3'"} onclick="setSkin('${s.e}')">${s.e}</button>`}).join('');$('bigSushi').textContent=S.skin}
+function setSkin(e){S.skin=e;renderSkins();saveGame()}
+function renderStore(){let h='';BUILDINGS.forEach(b=>{const o=S.b[b.id]||0;const c=cost(b);if(S.totalAll<b.b*.2&&o===0){h+=`<div class="item locked"><div class="ic">❓</div><div><b>???</b><small>${fmt(b.b*.2)} to unlock</small></div></div>`;return}const cant=S.sushi<c;h+=`<div class="item ${cant?'cant':''}" onclick="buyBuilding('${b.id}')"><div class="ic">${b.i}</div><div><b>${b.n}</b><small>${fmt(b.c*(S.m[b.id]||1))}/s • ${o} owned</small></div><div class="pr ${cant?'no':''}">${fmt(c)} 🍣</div><div class="own">${o}</div></div>`});$('store').innerHTML=h;$('upDot').textContent=availUps().length?'('+availUps().length+')':''}
+function renderUp(){const a=availUps();let h=`<p style="color:#888;font-size:12px">${S.up.length} owned • heavenly ${S.heavenly} 🌌</p><div class="upGrid">`;a.slice(0,60).forEach(u=>{h+=`<div class="up ${S.sushi<u.c?'locked':''}" onclick="buyUp('${u.id}')">${u.i}<div class="tip"><b>${u.n}</b><br>${u.d||''}<br><b>${fmt(u.c)} 🍣</b></div></div>`});h+='</div><h3 style="margin:12px 0 6px">🌌 Prestige (${S.heavenly})</h3><div class="upGrid">';PRESTIGE_UPS.forEach(u=>{const o=S.pup.includes(u.id);h+=`<div class="up ${o?'':S.heavenly<u.c?'locked':''}" onclick="buyPUp('${u.id}')">${o?'✅':u.i}<div class="tip"><b>${u.n}</b><br>cost ${u.c} heavenly</div></div>`});h+='</div>';$('storeMid').innerHTML=h}
+function renderAch(){const list=ACH();let h=`<p style="color:#888;font-size:12px">${Object.keys(S.ach).length}/${list.length} unlocked • soy level ${soyLevel()}</p><div class="upGrid">`;list.forEach(a=>{const un=S.ach[a.id];h+=`<div class="up ${un?'':'locked'}" title="${a.d}">${a.i}</div>`});h+='</div>';$('storeMid').innerHTML=h}
+function soyLevel(){return 1+Math.floor(Object.keys(S.ach).length/12)}
+function renderMarket(){let h=`<p style="color:#888;font-size:12px">📈 Tuna Market • buy low sell high • sushi: ${fmt(S.sushi)} 🍣</p>`;STOCKS.forEach(s=>{const p=S.market[s.sym];const own=S.stocks[s.sym]||0;h+=`<div class="stock"><div style="font-size:28px">${s.sym==='TUNA'?'🐟':s.sym==='SALM'?'🍣':s.sym==='WASA'?'🌿':s.sym==='RICE'?'🌾':'🖤'}</div><div style="flex:1"><b>${s.n} (${s.sym})</b><br><small style="color:#888">$${p.toFixed(1)} 🍣 each • own ${own}</small></div><button class="tab" onclick="buyStock('${s.sym}')">Buy</button><button class="tab" onclick="sellStock('${s.sym}')">Sell</button></div>`});$('storeMid').innerHTML=h}
+function buyStock(sym){const p=S.market[sym];if(S.sushi<p)return;S.sushi-=p;S.stocks[sym]=(S.stocks[sym]||0)+1;renderMarket();update()}
+function sellStock(sym){if(!(S.stocks[sym]>0))return;S.stocks[sym]--;const p=S.market[sym];S.sushi+=p;S.total+=p;S.totalAll+=p;renderMarket();update()}
+function renderLump(){let h=`<p style="color:#888;font-size:12px">🟢 Wasabi Lumps: ${S.lumps} • next in ${Math.ceil(S.lumpT)}s • click building to +10% it</p>`;BUILDINGS.slice(0,12).forEach(b=>{h+=`<div class="stock"><div style="font-size:28px">${b.i}</div><div style="flex:1"><b>${b.n}</b><br><small>+${(S.lb[b.id]||0)*10}% from lumps</small></div><button class="tab" onclick="spendLump('${b.id}')">1 🟢</button></div>`});$('storeMid').innerHTML=h}
+function spendLump(id){if(S.lumps<1)return;S.lumps--;S.lb[id]=(S.lb[id]||0)+1;toast('🟢 '+id+' +10%');renderLump();saveGame()}
+function renderStats(){$('storeMid').innerHTML=`<div class="item"><div><b>🍣 ${fmt(S.sushi)}</b><small>total ${fmt(S.totalAll)} • hand ${fmt(S.hand)}</small></div></div><div class="item"><div><b>⚡ ${fmt(calcCps())}/s</b><small>raw ${fmt(calcRaw())} • prestige x${prestigeMult().toFixed(2)}</small></div></div><div class="item"><div><b>👆 ${fmt(calcClick())}/click</b><small>${S.clicks} clicks • best combo ${S.bestCombo} • crits ${S.crits}</small></div></div><div class="item"><div><b>🌌 Heavenly ${S.heavenly}</b><small>${S.prestiges} rebirths • lumps ${S.lumps}</small></div></div><div class="item"><div><b>🌟 Golden ${S.gold} • 😡 ${S.wrath}</b><small>soy lvl ${soyLevel()}</small></div></div>`}
+function renderSet(){$('storeMid').innerHTML=`<div class="item" onclick="S.muted=!S.muted;saveGame();renderSet()"><div><b>🔊 Sound ${S.muted?'OFF':'ON'}</b></div></div><div class="item" onclick="S.particles=!S.particles;saveGame();renderSet()"><div><b>✨ Particles ${S.particles?'ON':'OFF'}</b></div></div><div class="item" onclick="exportSave()"><div><b>📤 Export Save</b><small>copy code</small></div></div><div class="item" onclick="importSave()"><div><b>📥 Import Save</b></div></div><div class="item" onclick="resetGame()"><div><b>🗑️ Hard Reset</b></div></div>`}
+function ACH(){return [{id:'c100',i:'👆',d:'100 clicks',f:()=>S.clicks>=100},{id:'c10k',i:'👆',d:'10k clicks',f:()=>S.clicks>=10000},{id:'t1m',i:'🍣',d:'1M total',f:()=>S.totalAll>=1e6},{id:'t1b',i:'🍣',d:'1B total',f:()=>S.totalAll>=1e9},{id:'t1t',i:'🍣',d:'1T total',f:()=>S.totalAll>=1e12},{id:'t1q',i:'🍣',d:'1Qa total',f:()=>S.totalAll>=1e15},{id:'cps1k',i:'⚡',d:'1K cps',f:()=>calcCps()>=1e3},{id:'cps1m',i:'⚡',d:'1M cps',f:()=>calcCps()>=1e6},{id:'cps1b',i:'⚡',d:'1B cps',f:()=>calcCps()>=1e9},{id:'b50',i:'🏭',d:'50 buildings',f:()=>Object.values(S.b).reduce((a,b)=>a+b,0)>=50},{id:'b200',i:'🏭',d:'200 buildings',f:()=>Object.values(S.b).reduce((a,b)=>a+b,0)>=200},{id:'g5',i:'🌟',d:'5 golden',f:()=>S.gold>=5},{id:'combo50',i:'🔥',d:'50 combo',f:()=>S.bestCombo>=50},{id:'crit10',i:'🎯',d:'10 crits',f:()=>S.crits>=10},{id:'pres1',i:'🌌',d:'1 rebirth',f:()=>S.prestiges>=1},{id:'lump5',i:'🟢',d:'5 lumps',f:()=>S.lumps>=5||S.totalAll>=1e9}]}
+function checkAch(){ACH().forEach(a=>{if(!S.ach[a.id]&&a.f()){S.ach[a.id]=1;toast('🏆 '+a.d)}})}
 function toast(t){const d=document.createElement('div');d.className='toast';d.textContent=t;$('toastBox').appendChild(d);setTimeout(()=>d.remove(),3000)}
-function checkAch(){const a=[[100,'👆 Clicked 100 times'],[1000,'👆 Clicked 1k'],[100000,'🍣 100K sushi'],[10000000,'🍣 10M sushi'],[1000000000,'🍣 1B sushi'],[10,'🏭 10 buildings'],[100,'🏭 100 buildings']];a.forEach(([n,t])=>{const k='ach'+n+t;if(!S['a_'+k]&&(S.clicks>=n||S.total>=n||Object.values(S.b).reduce((x,y)=>x+y,0)>=n)){S['a_'+k]=1;toast('🏆 '+t)}})}
-function update(){$('count').textContent=fmt(S.sushi)+' sushi';$('per').textContent='per second: '+fmt(calcCps())+' • per click: '+fmt(calcClick());$('miniStats').textContent=`total ${fmt(S.total)} • ${S.clicks} clicks • golden ${S.gold}`;$('soy').style.height=Math.min(28,Math.log10(S.total+1)*4)+'%';if(curTab==='store'&&Math.random()<.3)renderStore();else if(curTab==='up')renderUp()}
-function newsTick(){const lines=[`News: sushi stocks up ${fmt(S.total)} eaten`,'News: local cat demands more tuna rolls 🐈','News: chopsticks shortage — scientists baffled 🥢','News: golden sushi spotted, click it for frenzy ✨',`News: you have ${Object.values(S.b).reduce((a,b)=>a+b,0)} buildings baking`,'News: soy sauce river rising, tasty 🌊'];$('newsInner').textContent='🍣 '+lines[Math.floor(Math.random()*lines.length)]+' • '+lines[Math.floor(Math.random()*lines.length)];setTimeout(newsTick,12000)}
-function spawnGolden(){if(!S)return;const g=$('golden');g.style.display='block';g.style.left=(10+Math.random()*80)+'vw';g.style.top=(20+Math.random()*60)+'vh';setTimeout(()=>{g.style.display='none'},13000);setTimeout(spawnGolden,60000+Math.random()*90000)}
-function clickGolden(){const g=$('golden');g.style.display='none';S.gold++;const r=Math.random();if(r<.4){S.frenzy=7;S.frenzyT=30;$('frenzyBar').style.display='block';$('frenzyBar').textContent='⚡ FRENZY x7 — 30s';toast('⚡ Frenzy x7!')}else if(r<.7){const gain=Math.max(S.sushi*0.15,calcCps()*900);S.sushi+=gain;S.total+=gain;toast('🍀 Lucky +'+fmt(gain))}else{S.cfrenzyT=15;toast('👆 CLICK FRENZY x777 — 15s!');pop(1200)}saveGame()}
-function loop(){if(!S)return;const cps=calcCps()/10;S.sushi+=cps;S.total+=cps;if(S.frenzyT>0){S.frenzyT-=0.1;if(S.frenzyT<=0){S.frenzy=1;$('frenzyBar').style.display='none'}}if(S.cfrenzyT>0)S.cfrenzyT-=0.1;checkAch();if(Math.random()<.02)update();else{$('count').textContent=fmt(S.sushi)+' sushi';$('per').textContent='per second: '+fmt(calcCps())+' • per click: '+fmt(calcClick())}}
-function saveGame(m){try{localStorage.setItem('sushi-clicker-v1',JSON.stringify(S));if(m)toast('💾 Saved')}catch{}}
-function loadGame(){try{const j=JSON.parse(localStorage.getItem('sushi-clicker-v1'));if(j&&typeof j.sushi==='number'){S=Object.assign(def(),j);return true}}catch{}S=def();return false}
-function resetGame(){if(!confirm('Reset all sushi? 🗑️'))return;localStorage.removeItem('sushi-clicker-v1');S=def();render();update()}
-loadGame();render();update();newsTick();spawnGolden();setInterval(loop,100);setInterval(saveGame,15000);setInterval(render,2000);
+function update(){$('count').textContent=fmt(S.sushi)+' sushi';$('per').textContent='per second: '+fmt(calcCps())+' • per click: '+fmt(calcClick())+' • prestige x'+prestigeMult().toFixed(2);$('miniStats').innerHTML=`total ${fmt(S.totalAll)} • combo ${S.combo} • heavenly ${S.heavenly} 🌌 • lumps ${S.lumps} 🟢`;if(S.frenzyT>0)$('frenzyBar').style.display='block';else $('frenzyBar').style.display='none';$('comboFill').style.width=Math.min(100,S.combo)+'%';$('comboTxt').textContent=`combo x${comboMult().toFixed(2)} • best ${S.bestCombo} • crit ${(S.critC*100).toFixed(0)}%`}
+function newsTick(){const L=[`News: ${fmt(S.totalAll)} sushi eaten`,`News: cat demands tuna 🐈`,`News: combo ${S.bestCombo} record 🔥`,`News: golden x${S.gold} spotted ✨`,`News: lumps growing 🟢`,`News: prestige ${S.heavenly} heavenly 🌌`];$('newsInner').textContent='🍣 '+L[Math.floor(Math.random()*L.length)]+' • '+L[Math.floor(Math.random()*L.length)];setTimeout(newsTick,12000)}
+function spawnGolden(){if(!S)return;const g=$('golden');g.textContent=Math.random()<.5?'🌟🍣':'✨🍣';g.style.display='block';g.style.left=(10+Math.random()*80)+'vw';g.style.top=(20+Math.random()*60)+'vh';setTimeout(()=>g.style.display='none',13000);setTimeout(spawnGolden,(60000+Math.random()*90000)*S.stormFreq)}
+function clickGolden(){S.gold++;$('golden').style.display='none';const r=Math.random();if(r<.4){S.frenzy=7;S.frenzyT=30;$('frenzyBar').textContent='⚡ FRENZY x7 30s'}else if(r<.7){const gain=Math.max(S.sushi*.15,calcCps()*900);S.sushi+=gain;S.total+=gain;S.totalAll+=gain;toast('🍀 +'+fmt(gain))}else{S.cfrenzyT=12;toast('👆 CLICK FRENZY x777')}saveGame()}
+function spawnWrath(){if(!S)return;const g=$('wrath');g.style.display='block';g.style.left=(10+Math.random()*80)+'vw';g.style.top=(20+Math.random()*60)+'vh';setTimeout(()=>g.style.display='none',10000);setTimeout(spawnWrath,120000+Math.random()*120000)}
+function clickWrath(){S.wrath++;$('wrath').style.display='none';if(Math.random()<.5){S.sushi*= .85;toast('😡 Wrath ate 15%!')}else{S.frenzy=3;S.frenzyT=20;$('frenzyBar').textContent='😡 ANGER x3 20s'}}
+function startStorm(manual){if(!S)return;toast('🌧️ SUSHI STORM!');for(let i=0;i<20;i++){setTimeout(()=>{if(!S)return;const d=document.createElement('div');d.className='stormDrop';d.textContent=['🍣','🍱','🍤'][Math.floor(Math.random()*3)];d.style.left=Math.random()*95+'vw';d.style.animationDuration=(2+Math.random()*2)+'s';d.onclick=(e)=>{const v=Math.max(calcCps()*60,calcClick()*10);S.sushi+=v;S.total+=v;S.totalAll+=v;spawnFloat(e.clientX,100,'+'+fmt(v));d.remove();pop(1000);update()};document.body.appendChild(d);setTimeout(()=>d.remove(),5000)},i*400)}if(!manual)setTimeout(()=>startStorm(false),(300000)*S.stormFreq)}
+function marketTick(){STOCKS.forEach(s=>{let p=S.market[s.sym]||s.p;p*=1+(Math.random()-.48)*.1;p=Math.max(1,p);S.market[s.sym]=p});if(curTab==='market')renderMarket()}
+function lumpTick(){S.lumpT-=1;if(S.lumpT<=0){S.lumps++;S.lumpT=S.lumpRate;toast('🟢 +1 wasabi lump')}if(curTab==='lump')renderLump()}
+function prestigeGain(){return Math.floor(Math.sqrt(S.totalAll/1e12))}
+function rebirth(){const g=prestigeGain();if(g<1){toast('Need 1T all-time for +1 🌌 (now '+fmt(S.totalAll)+')');return}if(!confirm(`Rebirth for +${g} heavenly? Resets sushi/buildings. Keeps ach/lumps.`))return;S.heavenly+=g;S.prestiges++;S.sushi=0;S.total=0;S.b={};S.m={};S.up=S.up.filter(id=>id.startsWith('x'));S.frenzy=1;S.combo=0;toast(`🌌 +${g} heavenly!`);render();update();saveGame()}
+function claimDaily(){const today=new Date().toDateString();if(S.daily===today){toast('Already claimed 🎁');return}S.daily=today;const bonus=Math.max(1000,calcCps()*3600*.1+S.total*.01);S.sushi+=bonus;S.total+=bonus;S.totalAll+=bonus;toast('🎁 Daily +'+fmt(bonus));update();saveGame()}
+function calcOffline(){const gap=(Date.now()-S.lastSeen)/1000;if(gap<60)return;const gain=Math.min(calcCps()*gap*.5,calcCps()*28800);if(gain>10){S.sushi+=gain;S.total+=gain;S.totalAll+=gain;$('offDesc').textContent=`While away ${Math.floor(gap/60)}min: +${fmt(gain)} sushi (50% rate, 8h cap) + daily? Click Claim.`;$('modalOff').style.display='flex'}}
+function closeOffline(){$('modalOff').style.display='none';update();saveGame()}
+function saveGame(m){try{S.lastSeen=Date.now();localStorage.setItem('sushi-clicker-v2',JSON.stringify(S));if(m)toast('💾 Saved')}catch{}}
+function exportSave(){try{prompt('Copy save:',btoa(JSON.stringify(S)))}catch{}}
+function importSave(){try{const c=prompt('Paste save:');if(!c)return;S=Object.assign(def(),JSON.parse(atob(c)));render();update()}catch{toast('Bad save')}}
+function resetGame(){if(!confirm('Wipe all? 🗑️'))return;localStorage.removeItem('sushi-clicker-v2');S=def();render();update()}
+function loop(){if(!S)return;const c=calcCps()/10;S.sushi+=c;S.total+=c;S.totalAll+=c;if(S.comboT>0){S.comboT-=.1;if(S.comboT<=0)S.combo=0}if(S.frenzyT>0){S.frenzyT-=.1;$('frenzyBar').textContent=`⚡ FRENZY x${S.frenzy} ${Math.ceil(S.frenzyT)}s`;if(S.frenzyT<=0){S.frenzy=1;$('frenzyBar').style.display='none'}}if(S.cfrenzyT>0)S.cfrenzyT-=.1;if(S.bfrenzy&&S.bfrenzy.t>0){S.bfrenzy.t-=.1;if(S.bfrenzy.t<=0)S.bfrenzy=null}checkAch();$('count').textContent=fmt(S.sushi)+' sushi';$('per').textContent='per second: '+fmt(calcCps())+' • per click: '+fmt(calcClick())+' • prestige x'+prestigeMult().toFixed(2)}
+function load(){try{const v2=JSON.parse(localStorage.getItem('sushi-clicker-v2'));if(v2&&typeof v2.sushi==='number'){S=Object.assign(def(),v2);return}}catch{}try{const v1=JSON.parse(localStorage.getItem('sushi-clicker-v1'));if(v1){S=Object.assign(def(),v1);S.totalAll=v1.total||0;return}}catch{}S=def()}
+load();render();update();newsTick();spawnGolden();spawnWrath();calcOffline();setInterval(loop,100);setInterval(saveGame,15000);setInterval(renderStore,2500);setInterval(marketTick,5000);setInterval(lumpTick,1000);setInterval(()=>{if(curTab==='up')renderUp()},3000);
 </script>
 </body>
 </html>
