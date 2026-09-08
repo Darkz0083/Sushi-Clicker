@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>🍣 Sushi Clicker 4.0 — 100+ Features</title>
+<title>🍣 Sushi Clicker 5.0 — 300+ Features</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 <div id="bgFloat"></div><canvas id="fx"></canvas>
 <div id="app">
 <header>
-<div class="logo">🍣 Sushi Clicker <small>4.0 • modular • 100+ features</small></div>
+<div class="logo">🍣 Sushi Clicker <small>5.0 • modular • 300+ features</small></div>
 <div class="meta">⭐ <b id="stars">0</b> • 💍 <b id="rings">0</b> • <span id="seasonTag"></span></div>
 <div class="hbtns">
 <button id="themeBtn">🌙</button><button id="muteBtn">🔊</button><button id="musicBtn">🎵</button>
@@ -42,7 +42,7 @@
 <section>
 <div class="card">
 <div class="tabs">
-<button id="tB" class="active">🏠 Farm</button><button id="tU">⬆️<span id="upBadge"></span></button><button id="tQ">🎯<span id="questBadge"></span></button><button id="tM">📈</button><button id="tL">🧪</button><button id="tG">🎮</button><button id="tD">🍱</button><button id="tP">⭐</button><button id="tS">📊</button>
+<button id="tB" class="active">🏠 Farm</button><button id="tU">⬆️<span id="upBadge"></span></button><button id="tQ">🎯<span id="questBadge"></span></button><button id="tM">📈</button><button id="tL">🧪</button><button id="tG">🎮</button><button id="tD">🍱</button><button id="tC">🏺<span id="collectionBadge"></span></button><button id="tP">⭐</button><button id="tS">📊</button>
 </div>
 <div id="pB"><div class="buybar">Buy: <button data-amt="1" class="active">x1</button><button data-amt="10">x10</button><button data-amt="100">x100</button><button data-amt="max">Max</button><span id="chTag"></span></div><div id="buildingList"></div></div>
 <div id="pU" style="display:none"><div class="upgrid" id="upgradeList"></div></div>
@@ -51,6 +51,7 @@
 <div id="pL" style="display:none"><div id="labBox"></div></div>
 <div id="pG" style="display:none"><div id="gamesBox"></div></div>
 <div id="pD" style="display:none"><p class="dim">Each dex = +1% CPS.</p><div class="dex" id="dexList"></div></div>
+<div id="pC" style="display:none"><div id="collectionBox"></div></div>
 <div id="pP" style="display:none"><div id="prestigeBox"></div></div>
 <div id="pS" style="display:none"><div id="statsPanel"></div><h3 class="sec">🏆 (<span id="achCount"></span>)</h3><div id="achList"></div></div>
 </div>
@@ -59,6 +60,8 @@
 <div class="card"><h3 class="sec">🎁 Daily</h3><div id="dailyInfo"></div><button class="pbtn gold" id="dailyBtn">Claim</button></div>
 <div class="card"><h3 class="sec">⛵ Expeditions</h3><div id="expInfo"></div><button class="pbtn" id="goExp">Send (10% bank)</button></div>
 <div class="card"><h3 class="sec">🔪 Rival race</h3><div id="rivalInfo"></div><button class="pbtn red" id="rivalBtn">Start 5-min race</button></div>
+<div class="card"><h3 class="sec">🌱 Wasabi Garden</h3><div id="gardenInfo" class="dim"></div><div class="mrow"><button class="pbtn" id="plantRice">🌾 Rice</button><button class="pbtn" id="plantWas">🌿 Wasabi</button><button class="pbtn gold" id="plantGold">🌟 Gold</button></div><button class="pbtn blue" id="harvestBtn">Harvest</button></div>
+<div class="card"><h3 class="sec">🏭 Factory (auto-craft)</h3><div id="factoryInfo" class="dim"></div><button class="pbtn blue" id="factoryBtn">Toggle</button></div>
 <div class="card"><h3 class="sec">🎲 Events</h3><div id="eventFeed">Quiet…<br></div></div>
 <div class="card"><h3 class="sec">⚙️ Settings</h3>
 <div class="setrow"><span>✨ Particles</span><input type="checkbox" id="sParticles" checked></div>
@@ -68,7 +71,7 @@
 </div></div>
 </main>
 </div>
-<div id="golden">🍣</div><div id="ruby">🍣</div><div id="diamond">💎</div><div id="emerald">🍣</div><div id="rainbow">🌈</div>
+<div id="golden">🍣</div><div id="ruby">🍣</div><div id="diamond">💎</div><div id="emerald">🍣</div><div id="rainbow">🌈</div><div id="void">🕳️</div>
 <div id="toasts"></div>
 <div class="modal" id="offlineModal"><div class="mbox"><h2>🍱 Welcome back!</h2><p id="offlineText"></p><button id="offlineOk">Let's roll! 🍣</button></div></div>
 <script src="js/data.js"></script>

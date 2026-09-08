@@ -1,6 +1,6 @@
 'use strict';
 /* wiring + boot + all tick loops */
-function tab(w){[['tB','pB'],['tU','pU'],['tQ','pQ'],['tM','pM'],['tL','pL'],['tG','pG'],['tD','pD'],['tP','pP'],['tS','pS']]
+function tab(w){[['tB','pB'],['tU','pU'],['tQ','pQ'],['tM','pM'],['tL','pL'],['tG','pG'],['tD','pD'],['tC','pC'],['tP','pP'],['tS','pS']]
 .forEach(([t,p])=>{$(t).classList.toggle('active',p==='p'+w);$(p).style.display=p==='p'+w?'':'none';});
 if(w==='G')renderGames();if(w==='S')renderStats();}
 function applySet(){$('sParticles').checked=S.set.particles;$('sShake').checked=S.set.shake;$('sFull').checked=S.set.full;
@@ -15,7 +15,7 @@ document.querySelectorAll('.buybar button').forEach(x=>x.classList.remove('activ
 b.classList.add('active');buyAmt=b.dataset.amt==='max'?'max':parseInt(b.dataset.amt,10);renderShop();});
 $('tB').onclick=()=>tab('B');$('tU').onclick=()=>tab('U');$('tQ').onclick=()=>tab('Q');
 $('tM').onclick=()=>{tab('M');renderMarket();};$('tL').onclick=()=>tab('L');$('tG').onclick=()=>tab('G');
-$('tD').onclick=()=>tab('D');$('tP').onclick=()=>tab('P');$('tS').onclick=()=>tab('S');
+$('tD').onclick=()=>tab('D');$('tC').onclick=()=>{tab('C');renderCollection();};$('tP').onclick=()=>tab('P');$('tS').onclick=()=>tab('S');
 $('cat').onclick=e=>{let catM=season().n.includes('Winter')?1.5:1;
 const p=clickGain()*3*S.catLvl*(S.pUp.p_paws?2:1)/2*catM;if(p<=0)return;
 gain(p);burst(e.clientX,e.clientY,false);pop();updateHUD();};
@@ -38,6 +38,21 @@ S.rival={p0:S.runEarned,score:0,rps:Math.max(rawCps(),10)*(0.8+Math.random()*0.5
 toast('🔪 RACE! 5 min!');updateHUD();save();};
 $('rerollQ').onclick=()=>{const c=S.sushi*0.05;if(S.sushi<c)return;S.sushi-=c;
 S.quests=[newQuest(),newQuest(),newQuest()];renderAll();save();};
+function gardenUpdate(){
+const gi=$('gardenInfo');if(!gi)return;
+if(S.gardenPlant&&Date.now()>=S.gardenReady&&S.gardenCrop){gi.innerHTML='Ready to harvest '+S.gardenCrop+'!';return;}
+if(S.gardenPlant){gi.innerHTML='Growing… '+Math.max(0,Math.ceil((S.gardenReady-Date.now())/1000))+'s left';return;}
+gi.innerHTML='Empty plot. Plant a crop!';}
+$('plantRice').onclick=()=>plantCrop(0);$('plantWas').onclick=()=>plantCrop(1);$('plantGold').onclick=()=>plantCrop(2);
+function plantCrop(i){if(S.gardenPlant){toast('Already growing!');return;}
+const c=CROPS[i];S.gardenPlant=c.time;S.gardenReady=Date.now()+c.time*1000;S.gardenCrop=c.e+' '+c.n;buyS();gardenUpdate();save();}
+$('harvestBtn').onclick=()=>{if(!S.gardenPlant||Date.now()<S.gardenReady||!S.gardenCrop){toast('Nothing ready!');return;}
+const c=CROPS.find(x=>(c_e=>true)(0)&&(x.e+' '+x.n)===S.gardenCrop)||CROPS[0];
+const w=Math.max(rawCps()*60*c.mult,5000);gain(w);S.gardenPlant=0;S.gardenReady=0;S.gardenCrop='';
+toast('🌱 Harvest +'+fmt(w)+'!');goldS();gardenUpdate();updateHUD();save();};
+$('factoryBtn').onclick=()=>{S.factoryAuto=!S.factoryAuto;factoryUpdate();save();};
+function factoryUpdate(){const fi=$('factoryInfo');if(!fi)return;
+fi.innerHTML=S.factoryAuto?'ON — crafts cheapest upgrade every 30s':'OFF';}
 $('themeBtn').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';applySet();save();};
 $('muteBtn').onclick=()=>{S.muted=!S.muted;applySet();save();};
 $('musicBtn').onclick=()=>{S.music=!S.music;$('musicBtn').style.opacity=S.music?'1':'.4';
@@ -47,7 +62,7 @@ $('saveBtn').onclick=()=>{save();toast('💾 Saved!');};
 $('resetBtn').onclick=()=>{if(confirm('Delete EVERYTHING?')){localStorage.removeItem(KEY);location.reload();}};
 $('expBtn').onclick=()=>{save();prompt('Copy save:',btoa(unescape(encodeURIComponent(JSON.stringify(S)))));};
 $('impBtn').onclick=()=>{const s=prompt('Paste save:');if(!s)return;
-try{const p=JSON.parse(decodeURIComponent(escape(atob(s))));S=Object.assign(fresh(),p);applySet();renderAll();save();toast('📥 Loaded!');}catch(e){alert('Bad save.');}};
+try{const p=JSON.parse(decodeURIComponent(escape(atob(s))));const f=fresh();S=Object.assign(f,p);S.set=Object.assign(f.set,p.set||{});S.stocks=Object.assign(f.stocks,p.stocks||{});S.prices=Object.assign(f.prices,p.prices||{});applySet();renderAll();save();toast('📥 Loaded!');}catch(e){alert('Bad save.');}};
 $('sParticles').onchange=e=>{S.set.particles=e.target.checked;save();};
 $('sShake').onchange=e=>{S.set.shake=e.target.checked;save();};
 $('sFull').onchange=e=>{S.set.full=e.target.checked;renderAll();save();};
@@ -61,6 +76,9 @@ if(had){const away=Math.min((Date.now()-(S.lastSeen||Date.now()))/1000,8*3600);
 if(away>60){const g=cps()*away*0.5*offlineMult();gain(g);
 $('offlineText').textContent='Gone '+Math.floor(away/60)+'m. Chefs baked +'+fmt(g)+'!';$('offlineModal').classList.add('open');}}
 if(S.pUp.p_head&&S.sushi===0&&S.ascensions>0)S.sushi=10000;
+if(S.aura)document.body.dataset.aura=S.aura;
+S.stocks=Object.assign({nori:0,tuna:0,sake:0,miso:0,uni:0},S.stocks||{});
+S.prices=Object.assign({nori:100,tuna:500,sake:2500,miso:12000,uni:60000},S.prices||{});
 renderAll();checkAch();drawSpark();
 let ni=0;setInterval(()=>{ni=(ni+1)%NEWS.length;$('newsText').textContent=NEWS[ni].replace('X',totalB(S));},9000);
 setInterval(()=>{const g=cps()/20;S.sushi+=g;S.totalEarned+=g;S.runEarned+=g;
@@ -69,15 +87,19 @@ setInterval(()=>{S.playSec++;cpsHist.push(cps());cpsHist.shift();drawSpark();
 for(const r of RESEARCH){const st=S.research[r.id];
 if(st&&!st.done&&Date.now()-st.at>r.time*1000){st.done=true;toast('🧪 Done: '+r.n+'!');goldS();}}
 S.exps=S.exps.filter(e=>{if(Date.now()>=e.at){const loot=e.wager*(2+Math.random()*3);
-gain(loot);S.expsDone=(S.expsDone||0)+1;toast('⛵ +'+fmt(loot)+'!');goldS();return false;}return true;});
+gain(loot);S.expsDone=(S.expsDone||0)+1;toast('⛵ +'+fmt(loot)+'!');goldS();
+if(Math.random()<0.15)dropRelic(['bell']);return false;}return true;});
 if(S.rival&&Date.now()>=S.rival.ends){const p=S.runEarned-S.rival.p0;
 if(p>S.rival.score){const prize=S.rival.score*0.25+rawCps()*60;gain(prize);frenzyUntil=Date.now()+30000;
-toast('🏆 BEAT RIVAL! +'+fmt(prize)+'!');}else toast('😞 Rival won.');S.rival=null;}
+dropRelic(['coin']);toast('🏆 BEAT RIVAL! +'+fmt(prize)+'!');}else toast('😞 Rival won.');S.rival=null;}
 if(S.rival)S.rival.score+=S.rival.rps;
 if(S.activeCh&&S.runEarned>=1e8){S.doneCh[S.activeCh]=true;toast('🎯 BEATEN: '+S.activeCh+'!');achS();S.activeCh='';}
 if(S.manager){let best=null,bc=1e300;for(const b of B){const c=bCost(b,S.buildings[b.id]||0,1);
 if(c<S.sushi&&c<bc){bc=c;best=b;}}if(best){S.sushi-=bc;S.buildings[best.id]=(S.buildings[best.id]||0)+1;}}
-checkAch();renderShop();updateHUD();},1000);
+if(S.factoryAuto&&!window._factT||S.factoryAuto&&Date.now()-window._factT>30000){window._factT=Date.now();
+const av=availU().filter(u=>S.sushi>=u.cost).sort((a,b)=>a.cost-b.cost)[0];
+if(av){S.sushi-=av.cost;S.upgrades[av.id]=1;toast('🏭 Factory crafted: '+av.icon+' '+av.name);}}
+gardenUpdate();factoryUpdate();checkAch();renderShop();updateHUD();},1000);
 setInterval(()=>{for(const st of DSTOCKS){S.prices[st.id]=Math.max(5,S.prices[st.id]*(0.9+Math.random()*0.2));}},5000);
 setInterval(()=>{if(rawCps()>0){let m=season().n.includes('Winter')?1.5:1;
 gain(clickGain()*3*S.catLvl*(S.pUp.p_paws?2:1)*(Date.now()<catBoostUntil?3:1)*m);}},8000);

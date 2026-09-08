@@ -9,10 +9,13 @@ gb.innerHTML=
 +'<div class="gcard"><b>🎣 Fishing Pond (free, 5s cooldown)</b><div style="font-size:40px" id="pond">🌊</div><div class="dim" id="pondMsg">Catch fish for sushi! Rare = huge.</div><button class="gbtn" id="fishBtn">CAST</button></div>'
 +'<div class="gcard"><b>🧠 Memory Match (reward scales)</b><div class="dim" id="memMsg">Find all 3 pairs!</div><div class="fgrid" id="memGrid"></div><button class="gbtn" id="memBtn">NEW GAME</button></div>'
 +'<div class="gcard"><b>🦑 KRAKEN BOSS (click to attack!)</b><div style="font-size:44px" id="kraken">🦑</div><div class="dim" id="krakenHp">Spawn it!</div><button class="gbtn" id="krakenBtn">SPAWN (costs 60s production)</button><div class="dim">Wins: '+(S.bossWins||0)+' • each win = 300s production + frenzy</div></div>';
++'<div class="gcard"><b>⚔️ SAMURAI DUEL (click to attack!)</b><div style="font-size:44px" id="samurai">⚔️</div><div class="dim" id="samHp">Spawn him!</div><button class="gbtn" id="samuraiBtn">DUEL (costs 120s production)</button><div class="dim">Wins: '+(S.samWins||0)+' • 600s + click frenzy</div></div>'
++'<div class="gcard"><b>🕳️ VOID RIFT (endgame)</b><div style="font-size:44px">🕳️</div><div class="dim">Wins: '+(S.voidWins||0)+'</div><button class="gbtn" id="voidBtn">ENTER (10% bank, needs 1 ring)</button><div class="dim">Win = 1800s production + VOID x10 + relic</div></div>'
++'<div class="gcard"><b>🏯 Boss Rush</b><div style="font-size:44px">🏯</div><div class="dim">Level '+(S.bossRush||0)+'</div><button class="gbtn" id="rushBtn">RUSH (5 min production)</button><div class="dim">Win = 900s + both frenzies</div></div>';
 gb.querySelectorAll('[data-bet]').forEach(b=>b.onclick=()=>{
 const bet=S.sushi*parseFloat(b.dataset.bet);if(bet<10){toast('Need more!');return;}S.sushi-=bet;
 const r=Math.random();$('slot').textContent='🎲';
-setTimeout(()=>{if(r<0.15){const w=bet*5;gain(w);S.roulette++;$('slot').textContent='💰';$('slotMsg').textContent='JACKPOT +'+fmt(w);goldS();}
+setTimeout(()=>{if(r<0.15){const w=bet*5;gain(w);S.roulette++;S.slotWins=(S.slotWins||0)+1;$('slot').textContent='💰';$('slotMsg').textContent='JACKPOT +'+fmt(w);goldS();}
 else if(r<0.55){const w2=bet*2;gain(w2);S.roulette++;$('slot').textContent='🎉';$('slotMsg').textContent='Win +'+fmt(w2);buyS();}
 else{$('slot').textContent='💸';$('slotMsg').textContent='Lost '+fmt(bet);beep(150,0.3,'sawtooth',0.06);}
 checkAch();updateHUD();save();},400);});
@@ -20,7 +23,7 @@ $('spinBtn').onclick=()=>{
 const cost=Math.max(S.sushi*0.01,100);if(S.sushi<cost){toast('Need sushi!');return;}S.sushi-=cost;
 const em=['🍣','🍙','🦐','🍶','🐟','💎'];const a=em[Math.floor(Math.random()*em.length)],b2=em[Math.floor(Math.random()*em.length)],c=em[Math.floor(Math.random()*em.length)];
 $('reels').textContent=a+' '+b2+' '+c;
-if(a===b2&&b2===c){const w=cost*10;gain(w);S.roulette++;$('reelMsg').textContent='JACKPOT +'+fmt(w)+'!';goldS();}
+if(a===b2&&b2===c){const w=cost*10;gain(w);S.roulette++;S.slotWins=(S.slotWins||0)+1;$('reelMsg').textContent='JACKPOT +'+fmt(w)+'!';goldS();}
 else if(a===b2||b2===c||a===c){const w=cost*2;gain(w);S.roulette++;$('reelMsg').textContent='Pair +'+fmt(w);buyS();}
 else $('reelMsg').textContent='No luck…';
 checkAch();updateHUD();save();};
@@ -44,12 +47,26 @@ $('kraken').onclick=()=>bossHit();
 $('krakenBtn').onclick=()=>{
 const cost=Math.max(rawCps()*60,10000);if(S.krakenHp>0||S.sushi<cost){toast(S.krakenHp>0?'Already fighting!':'Need '+fmt(cost));return;}
 S.sushi-=cost;S.krakenMax=S.krakenHp=Math.floor(10+S.totalEarned/1e6+totalB(S)*2);
-bossPaint();toast('🦑 KRAKEN! Click it!');};}
+bossPaint();toast('🦑 KRAKEN! Click it!');};
+wireSamurai();
+$('voidBtn').onclick=()=>{
+if((S.rings||0)<1){toast('Need 1 💍 ring!');return;}
+const cost=S.sushi*0.1;if(cost<1e6){toast('Need bigger bank!');return;}
+S.sushi-=cost;
+if(Math.random()<0.5||rawCps()<=0){S.voidWins=(S.voidWins||0)+1;const w=Math.max(rawCps()*1800,1e6);gain(w);voidUntil=Date.now()+60000;
+if(!S.relics)S.relics={};if(!S.relics['mask']){S.relics['mask']=1;toast('🏺 RELIC: 👺 Void Mask!');}
+toast('🕳️ RIFT CONQUERED! +'+fmt(w));goldS();}else toast('🕳️ The void rejects you…');
+checkAch();updateHUD();save();};
+$('rushBtn').onclick=()=>{
+const cost=Math.max(rawCps()*300,50000);if(S.sushi<cost){toast('Need '+fmt(cost));return;}
+S.sushi-=cost;S.bossRush=(S.bossRush||0)+1;
+const w=Math.max(rawCps()*900,100000);gain(w);frenzyUntil=Date.now()+30000;clickFrenzyUntil=Date.now()+30000;
+toast('🏯 RUSH '+(S.bossRush)+' CLEARED! +'+fmt(w));goldS();checkAch();updateHUD();save();};}
 function memFlip(i){const m=memState;if(!m||m.found.includes(i)||m.open.includes(i))return;
 const btns=$('memGrid').children;btns[i].textContent=m.deck[i];m.open.push(i);
 if(m.open.length===2){m.moves++;const[a,b]=m.open;m.open=[];
 if(m.deck[a]===m.deck[b]){m.found.push(a,b);buyS();
-if(m.found.length===6){const w=Math.max(rawCps()*120,5000)*(1+Math.max(0,6-m.moves)*0.2);
+if(m.found.length===6){S.memWins=(S.memWins||0)+1;const w=Math.max(rawCps()*120,5000)*(1+Math.max(0,6-m.moves)*0.2);
 gain(w);S.roulette++;$('memMsg').textContent='Done in '+m.moves+' moves! +'+fmt(w);goldS();checkAch();updateHUD();save();}}
 else setTimeout(()=>{btns[a].textContent='❓';btns[b].textContent='❓';},600);}}
 function bossPaint(){$('kraken').textContent='🦑';
@@ -58,7 +75,24 @@ function bossHit(){if(S.krakenHp<=0)return;
 const dmg=Math.max(1,Math.floor(clickGain()+rawCps()*0.5+1));S.krakenHp-=dmg;pop();
 burst(innerWidth/2,innerHeight/2,false);
 if(S.krakenHp<=0){S.krakenHp=0;S.bossWins=(S.bossWins||0)+1;
-const w=Math.max(rawCps()*300,50000);gain(w);frenzyUntil=Date.now()+30000;
+const w=Math.max(rawCps()*300,50000);gain(w);frenzyUntil=Date.now()+30000;dropRelic(KRAKEN_LOOT);
 $('krakenHp').textContent='DEFEATED! +'+fmt(w)+' + frenzy!';
 toast('🦑 KRAKEN SLAIN! +'+fmt(w));goldS();checkAch();}
 else bossPaint();updateHUD();}
+/* samurai boss */
+function samPaint(){$('samurai').textContent='⚔️';$('samHp').textContent='HP '+fmt(S.samuraiHp)+' / '+fmt(S.samuraiMax);}
+function samHit(){if(S.samuraiHp<=0)return;
+const dmg=Math.max(1,Math.floor(clickGain()+rawCps()*0.5+1));S.samuraiHp-=dmg;pop();
+burst(innerWidth/2,innerHeight/2,false);
+if(S.samuraiHp<=0){S.samuraiHp=0;S.samWins=(S.samWins||0)+1;
+const w=Math.max(rawCps()*600,200000);gain(w);clickFrenzyUntil=Date.now()+20000;dropRelic(SAM_LOOT);
+$('samHp').textContent='DEFEATED! +'+fmt(w)+' + click frenzy!';
+toast('⚔️ SAMURAI BEATEN! +'+fmt(w));goldS();checkAch();}
+else samPaint();updateHUD();}
+function wireSamurai(){
+if(S.samuraiHp>0)samPaint();
+$('samurai').onclick=()=>samHit();
+$('samuraiBtn').onclick=()=>{
+const cost=Math.max(rawCps()*120,50000);if(S.samuraiHp>0||S.sushi<cost){toast(S.samuraiHp>0?'Already fighting!':'Need '+fmt(cost));return;}
+S.sushi-=cost;S.samuraiMax=S.samuraiHp=Math.floor(50+S.totalEarned/5e5+totalB(S)*5);
+samPaint();toast('⚔️ SAMURAI! Click him!');};}

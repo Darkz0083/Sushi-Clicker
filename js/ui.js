@@ -6,7 +6,7 @@ $('perSecond').textContent='per second: '+fmt(cps());$('perClick').textContent='
 $('stars').textContent=S.stars;$('rings').textContent=S.rings;
 const sn=season();$('seasonTag').textContent=sn.n;$('seasonName').textContent=sn.n+' Season';$('seasonDesc').textContent=sn.d+' • rotates every 5 min';
 const lvl=Math.floor(Object.keys(S.ach).length/3);
-$('multLine').textContent='🍶 Soy Lv '+lvl+' • ⭐ x'+(1+S.stars*0.05).toFixed(2)+' • 💍 x'+ringBonus().toFixed(2)+' • 🎖️ x'+mileBonus().toFixed(2);
+$('multLine').textContent='🍶 Lv '+lvl+' • ⭐ x'+(1+S.stars*0.05).toFixed(2)+' • 💍 x'+ringBonus().toFixed(2)+' • 🏺 x'+relicBonus().toFixed(2)+' • 🎖️ x'+mileBonus().toFixed(2)+(S.title?' • '+S.title:'');
 const cm=comboMult();$('comboX').textContent='x'+cm.toFixed(1);
 $('comboN').textContent=combo.length>1?'('+combo.length+')':'';$('comboFill').style.width=Math.min(combo.length/50*100,100)+'%';
 $('statsMini').innerHTML='baked <b>'+fmt(S.totalEarned)+'</b> • run '+fmt(S.runEarned)+'<br>bldgs '+totalB(S)+' • specials '+(S.golden||0)+' • streak x'+S.lucky+'<br>best run '+fmt(S.bestRun)+' • '+Math.floor(S.playSec/60)+'m';
@@ -16,6 +16,7 @@ if(t<clickFrenzyUntil)h+='<div class="buff">👆 x777 '+Math.ceil((clickFrenzyUn
 if(t<stormUntil)h+='<div class="buff red">⛈️ STORM x10 '+Math.ceil((stormUntil-t)/1e3)+'s</div>';
 if(t<emerUntil)h+='<div class="buff green">💚 x3 '+Math.ceil((emerUntil-t)/1e3)+'s</div>';
 if(t<rbowUntil)h+='<div class="buff">🌈 x5 '+Math.ceil((rbowUntil-t)/1e3)+'s</div>';
+if(t<voidUntil)h+='<div class="buff red">🕳️ VOID x10 '+Math.ceil((voidUntil-t)/1e3)+'s</div>';
 if(t<sacUntil)h+='<div class="buff red">🔥 SAC x2 '+Math.ceil((sacUntil-t)/1e3)+'s</div>';
 if(t<michUntil)h+='<div class="buff">⭐ MICHELIN '+Math.ceil((michUntil-t)/1e3)+'s</div>';
 if(S.activeCh)h+='<div class="buff blue">🎯 '+S.activeCh+'</div>';
@@ -51,7 +52,7 @@ for(const u of av){const cant=S.sushi<u.cost;const d=document.createElement('div
 d.className='up';d.style.opacity=cant?'.6':'1';
 d.innerHTML='<div class="em">'+u.icon+'</div><b>'+u.name+'</b><small>'+u.desc+'</small><span class="cost">🍣 '+fmt(u.cost)+'</span>';
 if(!cant)d.onclick=()=>buyU(u.id);ul.appendChild(d);}
-renderQuests();renderMarket();renderLab();renderDex();renderPrestige();renderStats();renderSpec();}
+renderQuests();renderMarket();renderLab();renderDex();renderCollection();renderPrestige();renderStats();renderSpec();}
 function renderQuests(){ensureQuests();const ql=$('questList');ql.innerHTML='';let ready=0;
 const qn={click:'👆 Click',bake:'🍣 Bake (run)',own:'🏠 Own buildings',gold:'✨ Specials'};
 S.quests.forEach((q,i)=>{const p=Math.max(0,questProg(q)),done=p>=q.goal;if(done)ready++;
@@ -63,7 +64,8 @@ $('questBadge').textContent=ready?'('+ready+')':'';
 ql.querySelectorAll('[data-q]').forEach(b=>b.onclick=()=>{const q=S.quests[+b.dataset.q];
 if(questProg(q)<q.goal)return;const rw=questReward();gain(rw);S.questsDone++;S.quests[+b.dataset.q]=newQuest();
 toast('🎯 Quest! +'+fmt(rw));buyS();renderAll();save();});}
-function renderMarket(){let h='';for(const st of DSTOCKS){const p=S.prices[st.id],hold=S.stocks[st.id]||0;
+function stockWorth(){let t=0;for(const st of DSTOCKS)t+=(S.stocks[st.id]||0)*S.prices[st.id];return t;}
+function renderMarket(){let h=row('Portfolio value',fmt(stockWorth()));for(const st of DSTOCKS){const p=S.prices[st.id],hold=S.stocks[st.id]||0;
 h+='<div class="q"><b>'+st.n+' — '+fmt(p)+'</b> • hold '+hold+' ('+fmt(hold*p)+')<div class="mrow"><button class="pbtn" data-mbuy="'+st.id+'">Buy 1</button><button class="pbtn blue" data-msell="'+st.id+'">Sell all</button></div></div>';}
 h+='<p class="dim">Prices drift every 5s. Buy low, sell high. Winter boosts offline gains.</p>';
 $('marketBox').innerHTML=h;
@@ -103,16 +105,54 @@ const g=Math.floor(S.stars/50);S.rings+=g;S.stars=S.stars%50;wipeRun();toast('�
 document.querySelectorAll('[data-ch]').forEach(b=>b.onclick=()=>{if(S.activeCh||!confirm('Start '+b.dataset.ch+'? Run resets.'))return;
 wipeRun();S.activeCh=b.dataset.ch;toast('🎯 '+b.dataset.ch+' started! 100M!');renderAll();save();});
 const gu=$('giveUp');if(gu)gu.onclick=()=>{S.activeCh='';renderAll();save();};}
+function renderCollection(){
+S.relics=S.relics||{};S.charms=S.charms||{};S.titles=S.titles||[];
+let h='<h3 class="sec">🏺 Relics (boss/expedition/rival drops, permanent CPS)</h3>';
+if(!RELICS.length)h+='<p class="dim">None yet.</p>';
+for(const r of RELICS){const has=S.relics[r.id];
+h+='<div class="q"><b>'+r.e+' '+r.n+'</b> — '+r.d+'<br>'+(has?'<span style="color:var(--mint)">✅ owned (x'+r.mult+')</span>':'<span class="dim">🔒 not found</span>')+'</div>';}
+const ownedC=Object.keys(S.charms).length;
+h+='<h3 class="sec" style="margin-top:10px">🧿 Charms (buyable CPS, '+ownedC+'/'+CHARMS.length+')</h3>';
+for(const c of CHARMS){const has=S.charms[c.id];
+h+='<div class="q"><b>'+c.e+' '+c.n+'</b> — '+c.d+'<br><span class="dim">cost '+fmt(c.cost)+'</span> '+(has?'✅ owned':'<button class="pbtn gold" data-charm="'+c.id+'">Buy</button>')+'</div>';}
+h+='<h3 class="sec" style="margin-top:10px">🌟 Aura (one active, '+ (S.aura||'none') +')</h3>';
+for(const a of AURAS){if(!a.id)continue;const on=S.aura===a.id;
+h+='<div class="q"><b>'+(a.e||'')+' '+a.n+'</b> — '+a.d+'<br><span class="dim">cost '+fmt(a.cost)+'</span> '+(on?'✅ active':'<button class="pbtn blue" data-aura="'+a.id+'">Activate</button>')+'</div>';}
+h+='<h3 class="sec" style="margin-top:10px">🎖️ Titles (auto-unlock, all stack)</h3>';
+for(const t of TITLES){const has=S.titles.includes(t.id);
+h+='<div class="q"><b>'+t.n+'</b> — '+t.d+'<br>'+(has?'<span style="color:var(--mint)">✅ earned</span> <button class="pbtn" data-showtitle="'+t.id+'">Show</button>':'<span class="dim">🔒 locked</span>')+'</div>';}
+h+='<h3 class="sec" style="margin-top:10px">🖼️ Museum (golden-age sets)</h3>';
+const sets=[['chop','kitchen','chef','boat','rice'],['tuna','train','factory','wasabi','portal'],['temple','sake','ninja','catcafe','tower'],['fuji','bamboo','aqua','airport','trench'],['moon','volcano','atlantis','dojo','robot'],['time','onsen','sumo','karaoke','shinkansen'],['kabuki','zen','tokyo','origami','bonsai'],['taiko','ramen','sakura','kaiju','neon']];
+S.museum=S.museum||[];
+sets.forEach((set,i)=>{const done=set.every(id=>(S.buildings[id]||0)>=25);
+const has=S.museum.includes(i);
+h+='<div class="q"><b>Set '+(i+1)+'</b> — 25+ of '+set.map(id=>{const b=B.find(x=>x.id===id);return b?b.emoji:'?';}).join(' ')+'<br>'+(has?'✅ enshrined (CPS x1.05)':done?'<button class="pbtn gold" data-museum="'+i+'">Enshrine (CPS x1.05)</button>':'<span class="dim">🔒 need 25 of each</span>')+'</div>';});
+$('collectionBox').innerHTML=h;
+const owned=Object.keys(S.relics).length+ownedC+(S.museum||[]).length;
+$('collectionBadge').textContent=owned?'('+owned+')':'';
+$('collectionBox').querySelectorAll('[data-charm]').forEach(b=>b.onclick=()=>{const c=CHARMS.find(x=>x.id===b.dataset.charm);
+if(S.charms[c.id]||S.sushi<c.cost)return;S.sushi-=c.cost;S.charms[c.id]=1;buyS();renderAll();save();});
+$('collectionBox').querySelectorAll('[data-aura]').forEach(b=>b.onclick=()=>{const a=AURAS.find(x=>x.id===b.dataset.aura);
+if(S.sushi<a.cost)return;S.sushi-=a.cost;S.aura=a.id;document.body.dataset.aura=a.id;buyS();renderAll();save();});
+$('collectionBox').querySelectorAll('[data-showtitle]').forEach(b=>b.onclick=()=>{const t=TITLES.find(x=>x.id===b.dataset.showtitle);
+S.title=t.n;renderAll();save();toast('🎖️ Showing title: '+t.n);});
+$('collectionBox').querySelectorAll('[data-museum]').forEach(b=>b.onclick=()=>{const i=+b.dataset.museum;
+if((S.museum||[]).includes(i))return;S.museum.push(i);buyS();renderAll();save();toast('🖼️ Set enshrined! CPS x1.05');});
+}
+function museumBonus(){return Math.pow(1.05,(S.museum||[]).length);}
 function renderStats(){if(cps()>S.bestCps)S.bestCps=cps();
 $('statsPanel').innerHTML=row('Bank',fmt(S.sushi))+row('Total',fmt(S.totalEarned))+row('Run',fmt(S.runEarned))
 +row('Best run',fmt(S.bestRun))+row('Best CPS',fmt(S.bestCps))+row('CPS',fmt(cps()))+row('Click',fmt(clickGain()))
-+row('Buildings',totalB(S))+row('Milestones','x'+mileBonus().toFixed(2))+row('Stocks',fmt((S.stocks.nori||0)*S.prices.nori+(S.stocks.tuna||0)*S.prices.tuna+(S.stocks.sake||0)*S.prices.sake))
-+row('Quests',S.questsDone||0)+row('Expeditions',S.expsDone||0)+row('Fish wins',S.fishWins||0)+row('Boss wins',S.bossWins||0);
++row('Buildings',totalB(S))+row('Milestones','x'+mileBonus().toFixed(2))+row('Stocks',fmt(stockWorth()))
++row('Quests',S.questsDone||0)+row('Expeditions',S.expsDone||0)+row('Fish wins',S.fishWins||0)+row('Memory wins',S.memWins||0)+row('Slot wins',S.slotWins||0)
++row('Boss wins',(S.bossWins||0)+'/'+(S.samWins||0)+'/'+(S.voidWins||0)+' (kraken/sam/void)')+row('Boss rush lvl',S.bossRush||0)
++row('Relics',(S.relics?Object.keys(S.relics).length:0)+'/'+RELICS.length)+row('Charms',(S.charms?Object.keys(S.charms).length:0)+'/'+CHARMS.length)
++row('Titles',(S.titles||[]).length+'/'+TITLES.length)+row('Aura',S.aura||'none')+row('Garden crop',S.gardenCrop||'empty');
 const al=$('achList');al.innerHTML='';$('achCount').textContent=Object.keys(S.ach).length+'/'+ACH.length;
 for(const a of ACH){const w=!!S.ach[a.id];const d=document.createElement('div');
 d.className='ach'+(w?' won':'');d.innerHTML=(w?'🏆 ':'🔒 ')+a.n+' — '+a.d;al.appendChild(d);}}
 function renderSpec(){const ss=$('specSel');
-if(!ss.options.length)ss.innerHTML='<option value="">no focus</option>'+B.map(b=>'<option value="'+b.id+'">'+b.emoji+' '+b.name+' x3</option>').join('');
+if(ss.options.length!==B.length+1)ss.innerHTML='<option value="">no focus</option>'+B.map(b=>'<option value="'+b.id+'">'+b.emoji+' '+b.name+' x3</option>').join('');
 ss.value=S.spec||'';}
 function drawSpark(){const c=$('spark'),x=c.getContext('2d');c.width=c.offsetWidth||300;c.height=56;
 const m=Math.max(...cpsHist,1);x.clearRect(0,0,c.width,c.height);x.beginPath();

@@ -26,7 +26,21 @@ const B=[
 {id:'atlantis',name:'Atlantis Sushi',emoji:'🧜',baseCost:1.5e25,baseCps:1.3e17,desc:'Sunken recipes.'},
 {id:'dojo',name:'Samurai Dojo',emoji:'⚔️',baseCost:2e26,baseCps:9e17,desc:'Blade-cut fish.'},
 {id:'robot',name:'Robot Sushi Bar',emoji:'🤖',baseCost:2.6e27,baseCps:6e18,desc:'No breaks.'},
-{id:'time',name:'Time Machine',emoji:'⏰',baseCost:3.4e28,baseCps:4e19,desc:'Future fish.'}];
+{id:'time',name:'Time Machine',emoji:'⏰',baseCost:3.4e28,baseCps:4e19,desc:'Future fish.'},
+{id:'onsen',name:'Onsen Resort',emoji:'♨️',baseCost:4.4e29,baseCps:2.7e20,desc:'Relaxed chefs.'},
+{id:'sumo',name:'Sumo Stable',emoji:'🦍',baseCost:5.8e30,baseCps:1.8e21,desc:'Heavy appetite.'},
+{id:'karaoke',name:'Karaoke Bar',emoji:'🎤',baseCost:7.6e31,baseCps:1.2e22,desc:'Sing for sushi.'},
+{id:'shinkansen',name:'Shinkansen Line',emoji:'🚄',baseCost:9.9e32,baseCps:8.2e22,desc:'Bullet delivery.'},
+{id:'kabuki',name:'Kabuki Theater',emoji:'🎭',baseCost:1.3e34,baseCps:5.5e23,desc:'Dramatic rolls.'},
+{id:'zen',name:'Zen Garden',emoji:'🪨',baseCost:1.7e35,baseCps:3.7e24,desc:'Mindful maki.'},
+{id:'tokyo',name:'Tokyo Tower II',emoji:'🗼',baseCost:2.2e36,baseCps:2.5e25,desc:'Tourist trap.'},
+{id:'origami',name:'Origami Factory',emoji:'🦢',baseCost:2.9e37,baseCps:1.7e26,desc:'Folded fish.'},
+{id:'bonsai',name:'Bonsai Forest',emoji:'🌳',baseCost:3.8e38,baseCps:1.1e27,desc:'Tiny trees.'},
+{id:'taiko',name:'Taiko Arena',emoji:'🥁',baseCost:5e39,baseCps:7.6e27,desc:'Drum-powered.'},
+{id:'ramen',name:'Ramen Dimension',emoji:'🍜',baseCost:6.5e40,baseCps:5.1e28,desc:'Noodle portal.'},
+{id:'sakura',name:'Sakura Singularity',emoji:'🌸',baseCost:8.5e41,baseCps:3.4e29,desc:'Petal physics.'},
+{id:'kaiju',name:'Kaiju Kitchen',emoji:'🦖',baseCost:1.1e43,baseCps:2.3e30,desc:'Monster portions.'},
+{id:'neon',name:'Neo-Tokyo Grid',emoji:'🌃',baseCost:1.5e44,baseCps:1.5e31,desc:'Cyber sushi.'}];
 const UPGRADES=[
 {id:'click1',name:'Reinforced Chopsticks',icon:'🥢',desc:'+1/click',cost:100,req:s=>s.totalClicks>=15},
 {id:'click2',name:'Titanium Chopsticks',icon:'🍴',desc:'click x2',cost:5e3,req:s=>s.totalClicks>=100},
@@ -47,10 +61,20 @@ const UPGRADES=[
 {id:'syn4',name:'Cat synergy',icon:'🤝',desc:'Tower x2 (5 cafés)',cost:1e16,req:s=>(s.buildings.catcafe||0)>=5,eff:{tower:2}},
 {id:'syn5',name:'Ninja synergy',icon:'🤝',desc:'Train x2 (10 ninja)',cost:1e15,req:s=>(s.buildings.ninja||0)>=10,eff:{train:2}},
 {id:'syn6',name:'Moon synergy',icon:'🤝',desc:'Airport x2 (5 moon)',cost:1e24,req:s=>(s.buildings.moon||0)>=5,eff:{airport:2}},
-{id:'syn7',name:'Robot synergy',icon:'🤝',desc:'Factory x3 (10 robots)',cost:1e28,req:s=>(s.buildings.robot||0)>=10,eff:{factory:3}}];
+{id:'syn7',name:'Robot synergy',icon:'🤝',desc:'Factory x3 (10 robots)',cost:1e28,req:s=>(s.buildings.robot||0)>=10,eff:{factory:3}},
+{id:'syn8',name:'Onsen synergy',icon:'🤝',desc:'Chef x2 (10 onsen)',cost:1e30,req:s=>(s.buildings.onsen||0)>=10,eff:{chef:2}},
+{id:'syn9',name:'Sumo synergy',icon:'🤝',desc:'Rice x2 (10 sumo)',cost:1e32,req:s=>(s.buildings.sumo||0)>=10,eff:{rice:2}},
+{id:'syn10',name:'Bullet synergy',icon:'🤝',desc:'Train x2 (10 shinkansen)',cost:1e34,req:s=>(s.buildings.shinkansen||0)>=10,eff:{train:2}},
+{id:'syn11',name:'Zen synergy',icon:'🤝',desc:'Temple x2 (10 zen)',cost:1e36,req:s=>(s.buildings.zen||0)>=10,eff:{temple:2}},
+{id:'syn12',name:'Neon synergy',icon:'🤝',desc:'Robot x2 (10 neon)',cost:1e45,req:s=>(s.buildings.neon||0)>=10,eff:{robot:2}},
+{id:'click9',name:'Neon Fingers',icon:'🌃',desc:'click x2',cost:5e22,req:s=>s.handmade>=5e10},
+{id:'click10',name:'Kaiju Grip',icon:'🦖',desc:'click +5% of CPS',cost:5e26,req:s=>s.handmade>=5e12},
+{id:'soy6',name:'Golden Roe',icon:'🧡',desc:'all x1.5',cost:1e21,req:s=>s.totalEarned>=5e20},
+{id:'soy7',name:'Midnight Miso',icon:'🌑',desc:'all x2',cost:1e25,req:s=>s.totalEarned>=5e24}];
 B.forEach(b=>{
 UPGRADES.push({id:b.id+'-m1',building:b.id,mult:2,name:b.name+' I',icon:b.emoji,desc:b.name+' x2',cost:b.baseCost*12,req:s=>(s.buildings[b.id]||0)>=10});
-UPGRADES.push({id:b.id+'-m2',building:b.id,mult:2,name:b.name+' II',icon:b.emoji,desc:b.name+' x2',cost:b.baseCost*250,req:s=>(s.buildings[b.id]||0)>=50});});
+UPGRADES.push({id:b.id+'-m2',building:b.id,mult:2,name:b.name+' II',icon:b.emoji,desc:b.name+' x2',cost:b.baseCost*250,req:s=>(s.buildings[b.id]||0)>=50});
+UPGRADES.push({id:b.id+'-m3',building:b.id,mult:2,name:b.name+' III',icon:b.emoji,desc:b.name+' x2',cost:b.baseCost*5000,req:s=>(s.buildings[b.id]||0)>=100});});
 const DEX=[
 {id:'a',e:'🍣',n:'Nigiri',at:100},{id:'b',e:'🍱',n:'Bento',at:1e4},{id:'c',e:'🍙',n:'Onigiri',at:1e6},
 {id:'d',e:'🦐',n:'Ebi',at:1e8},{id:'e',e:'🐙',n:'Tako',at:1e10},{id:'f',e:'🦀',n:'Crab',at:1e12},
@@ -66,7 +90,7 @@ const RESEARCH=[
 {id:'luck',n:'Luck Lab',d:'crit +5%, 300s',cost:1e9,time:300}];
 const CHALS=[{id:'noclick',n:'🚫 No-Click',d:'Clicks = 0. Reach 100M: +20% CPS.'},{id:'poor',n:'💸 Tax Season',d:'Costs x1.5. Reach 100M: +25% CPS.'},{id:'slow',n:'🐌 Slow Bake',d:'CPS x0.5. Reach 100M: +15% CPS.'}];
 const SEASONS=[{n:'🌸 Spring',d:'clicks +25%'},{n:'☀️ Summer',d:'CPS +15%'},{n:'🍂 Autumn',d:'goldens 2x often'},{n:'❄️ Winter',d:'cat +50%, offline 2x'}];
-const DSTOCKS=[{id:'nori',n:'🍙 Nori',p:100},{id:'tuna',n:'🐟 Tuna',p:500},{id:'sake',n:'🍶 Sake',p:2500}];
+const DSTOCKS=[{id:'nori',n:'🍙 Nori',p:100},{id:'tuna',n:'🐟 Tuna',p:500},{id:'sake',n:'🍶 Sake',p:2500},{id:'miso',n:'🍲 Miso',p:12000},{id:'uni',n:'🦔 Uni',p:60000}];
 const ACH=[
 {id:'c1',n:'First Bite',d:'Click 10x',c:s=>s.totalClicks>=10},{id:'c2',n:'Pro',d:'Click 500x',c:s=>s.totalClicks>=500},
 {id:'c3',n:'Tunnel',d:'Click 5k',c:s=>s.totalClicks>=5e3},{id:'c4',n:'Click God',d:'Click 25k',c:s=>s.totalClicks>=25e3},
@@ -89,7 +113,36 @@ const ACH=[
 {id:'f1',n:'Fisher King',d:'Win fishing 5x',c:s=>(s.fishWins||0)>=5},{id:'x1',n:'Crit Happens',d:'25 crits',c:s=>(s.crits||0)>=25},
 {id:'x2',n:'High Roller',d:'Hold 1B',c:s=>s.sushi>=1e9},{id:'x3',n:'Stonks',d:'Hold 10 stocks',c:s=>stockTotal(s)>=10},
 {id:'t1',n:'Veteran',d:'Play 30m',c:s=>s.playSec>=1800},{id:'r1',n:'Gambler',d:'Win roulette 3x',c:s=>s.roulette>=3},
-{id:'r2',n:'Ring Bearer',d:'3 rings',c:s=>s.rings>=3}];
+{id:'r2',n:'Ring Bearer',d:'3 rings',c:s=>s.rings>=3},
+{id:'c5',n:'Click Storm',d:'Click 100k',c:s=>s.totalClicks>=1e5},
+{id:'e7',n:'Multiversal',d:'Bake 1Sx',c:s=>s.totalEarned>=1e21},
+{id:'e8',n:'Infinite Roll',d:'Bake 1Sp',c:s=>s.totalEarned>=1e24},
+{id:'p5',n:'Starforge',d:'1B/s',c:()=>cps()>=1e9},
+{id:'p6',n:'Galaxy Brain',d:'1T/s',c:()=>cps()>=1e12},
+{id:'b5',n:'Tycoon',d:'Own 800',c:s=>totalB(s)>=800},
+{id:'b6',n:'Empire II',d:'Own 1500',c:s=>totalB(s)>=1500},
+{id:'g4',n:'Voidtouched',d:'Click void special',c:s=>typeof voidUntil!=='undefined'&&Date.now()<voidUntil||(s.golden||0)>=30},
+{id:'k3',n:'Fingergod',d:'100 combo',c:s=>s.maxCombo>=100},
+{id:'cat3',n:'Cat Legend',d:'Cat lvl 8',c:s=>s.catLvl>=8},
+{id:'d3',n:'Completionist',d:'Full dex',c:s=>DEX.filter(d=>s.totalEarned>=d.at).length>=DEX.length},
+{id:'s3',n:'Star Hoarder',d:'25 stars',c:s=>s.stars>=25},
+{id:'s4',n:'Ring Hoarder',d:'5 rings',c:s=>s.rings>=5},
+{id:'h4',n:'Triple Threat',d:'Beat all challenges',c:s=>s.doneCh.noclick&&s.doneCh.poor&&s.doneCh.slow},
+{id:'m3',n:'Neon Nights',d:'Own neon grid',c:s=>(s.buildings.neon||0)>=1},
+{id:'q3',n:'Overachiever',d:'25 quests',c:s=>(s.questsDone||0)>=25},
+{id:'q4',n:'Explorer',d:'10 expeditions',c:s=>(s.expsDone||0)>=10},
+{id:'f2',n:'Deep Fisher',d:'Win fishing 15x',c:s=>(s.fishWins||0)>=15},
+{id:'f3',n:'Memory Pro',d:'Win memory 5x',c:s=>(s.memWins||0)>=5},
+{id:'f4',n:'Slot Demon',d:'Win slots 10x',c:s=>(s.slotWins||0)>=10},
+{id:'x4',n:'Relic Hunter',d:'3 relics',c:s=>s.relics&&Object.keys(s.relics).length>=3},
+{id:'x5',n:'Charmed',d:'3 charms',c:s=>s.charms&&Object.keys(s.charms).length>=3},
+{id:'x6',n:'Samurai Slayer',d:'Beat samurai',c:s=>(s.samWins||0)>=1},
+{id:'x7',n:'Voidwalker',d:'Beat void rift',c:s=>(s.voidWins||0)>=1},
+{id:'x8',n:'Rusher',d:'Rush lvl 3',c:s=>(s.bossRush||0)>=3},
+{id:'x9',n:'Curator',d:'Enshrine 2 sets',c:s=>(s.museum||[]).length>=2},
+{id:'x10',n:'Titled',d:'Earn 3 titles',c:s=>(s.titles||[]).length>=3},
+{id:'x11',n:'Gardener',d:'Harvest (reach 1M run)',c:s=>s.runEarned>=1e6},
+{id:'x12',n:'Automated',d:'Factory crafts (own 200)',c:s=>totalB(s)>=200}];
 /* 20 events */
 function EV(){
 return [
@@ -112,5 +165,47 @@ return [
 {n:'🌋 Eruption!',t:'Volcano cooks! +75s!',f:()=>gain(rawCps()*75)},
 {n:'🐳 Whale sighting!',t:'tourists +15% bank!',f:()=>gain(S.sushi*0.15+500)},
 {n:'❄️ Snow day!',t:'cozy! offline boost + frenzy 10s!',f:()=>{frenzyUntil=Date.now()+10000;}},
-{n:'🎃 Sushiween!',t:'spooky! clicks x5 20s!',f:()=>{rainUntil=Date.now()+20000;}}];}
-const NEWS=['News: clicker owns X buildings.','News: tuna up on demand.','Tip: quests print sushi.','Tip: specialization x3 is OP.','Tip: rings beat stars late.','Tip: fish when waiting.','Tip: expeditions scale with wager.','Tip: stocks drift — buy dips.'];
+{n:'🎃 Sushiween!',t:'spooky! clicks x5 20s!',f:()=>{rainUntil=Date.now()+20000;}},
+{n:'🕳️ Void leak!',t:'reality bends! VOID x10 20s!',f:()=>{voidUntil=Date.now()+20000;}},
+{n:'🏺 buried relic!',t:'expedition rumors… +90s!',f:()=>{gain(rawCps()*90);}},
+{n:'🌸 Petal storm!',t:'beautiful! +60s!',f:()=>gain(rawCps()*60)},
+{n:'🦖 Kaiju visit!',t:'it pays in fish! +120s!',f:()=>gain(rawCps()*120)},
+{n:'🎤 Karaoke night!',t:'everyone sings! clicks x4 20s!',f:()=>{rainUntil=Date.now()+20000;}},
+{n:'🚄 Bullet lunch!',t:'fast delivery! frenzy 15s!',f:()=>{frenzyUntil=Date.now()+15000;}},
+{n:'♨️ Onsen day!',t:'relaxed! cat x2 60s!',f:()=>{catBoostUntil=Date.now()+60000;}},
+{n:'🎭 Kabuki night!',t:'drama! +45s!',f:()=>gain(rawCps()*45)},
+{n:'🌃 Neon surge!',t:'grid overload! CPS x2 30s!',f:()=>{sacUntil=Date.now()+30000;}}];}
+const NEWS=['News: clicker owns X buildings.','News: tuna up on demand.','Tip: quests print sushi.','Tip: specialization x3 is OP.','Tip: rings beat stars late.','Tip: fish when waiting.','Tip: expeditions scale with wager.','Tip: stocks drift — buy dips.','News: kaiju spotted near port. Sales up.','Tip: relics drop from bosses.','Tip: garden crops print production.','Tip: museum sets are permanent.','Tip: void rift needs a ring.','News: neon grid consumes 10% of city power.','Tip: factory auto-crafts upgrades.','Tip: titles stack forever.'];
+/* v5 systems data */
+const RELICS=[
+{id:'chop_old',e:'🥢',n:'Ancient Chopsticks',d:'CPS x1.1 (kraken drop)',mult:1.1},
+{id:'pearl',e:'🦪',n:'Black Pearl',d:'CPS x1.15 (kraken drop)',mult:1.15},
+{id:'katana',e:'🗡️',n:'Samurai Katana',d:'CPS x1.2 (samurai drop)',mult:1.2},
+{id:'mask',e:'👺',n:'Void Mask',d:'CPS x1.5 (void drop)',mult:1.5},
+{id:'bell',e:'🔔',n:'Temple Bell',d:'CPS x1.1 (expedition)',mult:1.1},
+{id:'coin',e:'🪙',n:'Koban Coin',d:'CPS x1.25 (rival prize)',mult:1.25}];
+const CHARMS=[
+{id:'c1',e:'🍀',n:'Clover Charm',cost:1e9,d:'CPS x1.05',mult:1.05},
+{id:'c2',e:'🧲',n:'Magnet Charm',cost:1e12,d:'CPS x1.08',mult:1.08},
+{id:'c3',e:'🔥',n:'Ember Charm',cost:1e15,d:'CPS x1.12',mult:1.12},
+{id:'c4',e:'❄️',n:'Frost Charm',cost:1e18,d:'CPS x1.15',mult:1.15},
+{id:'c5',e:'⚡',n:'Storm Charm',cost:1e21,d:'CPS x1.2',mult:1.2},
+{id:'c6',e:'🌙',n:'Moon Charm',cost:1e24,d:'CPS x1.25',mult:1.25}];
+const AURAS=[
+{id:'',n:'None',cost:0,mult:1},
+{id:'a_gold',e:'✨',n:'Golden Aura',cost:1e12,d:'CPS x1.1, visuals gold',mult:1.1},
+{id:'a_fire',e:'🔥',n:'Fire Aura',cost:1e15,d:'CPS x1.2, visuals fire',mult:1.2},
+{id:'a_void',e:'🕳️',n:'Void Aura',cost:1e18,d:'CPS x1.35, visuals void',mult:1.35}];
+const TITLES=[
+{id:'t_click',n:'👆 Clicklord',d:'CPS x1.05',mult:1.05,check:s=>s.totalClicks>=10000},
+{id:'t_bake',n:'🍣 Bakemaster',d:'CPS x1.05',mult:1.05,check:s=>s.totalEarned>=1e12},
+{id:'t_gold',n:'✨ Goldtouched',d:'CPS x1.1',mult:1.1,check:s=>s.golden>=25},
+{id:'t_slayer',n:'🦑 Krakenslayer',d:'CPS x1.1',mult:1.1,check:s=>s.bossWins>=5},
+{id:'t_rich',n:'💰 Tycoon',d:'CPS x1.15',mult:1.15,check:s=>s.sushi>=1e12},
+{id:'t_asc',n:'🌟 Ascended One',d:'CPS x1.2',mult:1.2,check:s=>s.ascensions>=5}];
+const CROPS=[
+{id:'rice_c',e:'🌾',n:'Rice Sprout',time:30,mult:5},
+{id:'was_c',e:'🌿',n:'Wasabi Root',time:120,mult:15},
+{id:'gold_c',e:'🌟',n:'Golden Grain',time:300,mult:50}];
+const SAM_LOOT=['katana'];
+const KRAKEN_LOOT=['chop_old','pearl'];

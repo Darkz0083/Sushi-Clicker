@@ -49,16 +49,21 @@ else if(which==='emerald')spawn($('emerald'),()=>{goldS();S.golden++;goldRewardM
 emerUntil=Date.now()+300000;toast('💚 EMERALD! CPS x3 for 5 MIN!');checkAch();updateHUD();save();});
 else spawn($('rainbow'),()=>{goldS();S.golden++;goldRewardMult();rbowUntil=Date.now()+120000;
 frenzyUntil=Date.now()+60000;toast('🌈 RAINBOW! CPS x5 + frenzy 60s!');checkAch();updateHUD();save();});}
+function showVoid(){spawn($('void'),()=>{goldS();S.golden++;goldRewardMult();voidUntil=Date.now()+60000;
+toast('🕳️ VOID! CPS x10 for 60s!');checkAch();updateHUD();save();});}
 function goldenLoop(){let mag=(S.pUp.p_mag?0.5:1)*(S.research.radar&&S.research.radar.done?0.8:1);
 if(season().n.includes('Autumn'))mag*=0.5;
 setTimeout(()=>{if(!$('offlineModal').classList.contains('open')){const r=Math.random();
-if(r<0.45)showGold('golden');else if(r<0.65)showGold('ruby');else if(r<0.8)showGold('diamond');
-else if(r<0.93)showGold('emerald');else showGold('rainbow');}goldenLoop();},(75+Math.random()*105)*1000*mag);}
+if(r<0.42)showGold('golden');else if(r<0.6)showGold('ruby');else if(r<0.74)showGold('diamond');
+else if(r<0.86)showGold('emerald');else if(r<0.96)showGold('rainbow');else showVoid();}goldenLoop();},(75+Math.random()*105)*1000*mag);}
+function dropRelic(pool){for(const id of pool){if(S.relics&&S.relics[id])continue;S.relics=S.relics||{};S.relics[id]=1;
+const r=RELICS.find(x=>x.id===id);toast('🏺 RELIC: '+r.e+' '+r.n+' ('+r.d+')!');goldS();return true;}return false;}
+function checkTitles(){for(const t of TITLES){if(!(S.titles||[]).includes(t.id)){try{if(t.check(S)){S.titles.push(t.id);toast('🎖️ TITLE: '+t.n+' ('+t.d+')!');achS();}}catch(e){}}}}
 function eventLoop(){setTimeout(()=>{const evs=EV();const e=evs[Math.floor(Math.random()*evs.length)];
 try{e.f();}catch(_){}toast(e.n+' '+e.t);
 const f=$('eventFeed');f.innerHTML='• '+e.n+' '+e.t+'<br>'+f.innerHTML;updateHUD();eventLoop();},65000+Math.random()*65000);}
 function checkAch(){for(const a of ACH){if(!S.ach[a.id]){try{if(a.c(S)){S.ach[a.id]=1;
-toast('🏆 '+a.n+' — '+a.d);achS();}}catch(e){}}}}
+toast('🏆 '+a.n+' — '+a.d);achS();}}catch(e){}}}checkTitles();}
 function wipeRun(){S.sushi=S.pUp.p_head?10000:0;S.runEarned=0;S.buildings={};S.upgrades={};S.exps=[];
 frenzyUntil=clickFrenzyUntil=sacUntil=0;}
 function doAscend(earn){S.stars+=earn;S.ascensions++;S.activeCh='';wipeRun();
